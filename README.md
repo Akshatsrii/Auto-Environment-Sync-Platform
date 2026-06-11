@@ -336,24 +336,6 @@ Phase 3 — Intelligence                 Phase 4 — Scale & Collaboration
  🔲 Repository auto-scan on push        🔲 VS Code extension
 ```
 
----
-
-## 👥 Contributors
-
-<table>
-  <tr>
-    <td align="center">
-      <b>Riya Bansal</b><br/>
-      <sub>Frontend Development · UI Design · Dashboard Architecture</sub>
-    </td>
-    <td align="center">
-      <b>Akshat</b><br/>
-      <sub>Backend Development · Repository Analysis Engine · API Integration</sub>
-    </td>
-  </tr>
-</table>
-
----
 
 ## 📄 License
 
