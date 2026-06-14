@@ -1,38 +1,31 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-
-import MainLayout from "../layouts/MainLayout";
-
-import Login from "../pages/Login";
-import Dashboard from "../pages/Dashboard";
-import Sync from "../pages/Sync";
-import Environments from "../pages/Environments";
-import Compare from "../pages/Compare";
-import Logs from "../pages/Logs";
-import Settings from "../pages/Settings";
+import { Routes, Route, Navigate } from 'react-router-dom'
+import MainLayout from '../layouts/MainLayout'
+import AuthLayout from '../layouts/AuthLayout'
+import Dashboard from '../pages/Dashboard'
+import Environments from '../pages/Environments'
+import Compare from '../pages/Compare'
+import Sync from '../pages/Sync'
+import Logs from '../pages/Logs'
+import Settings from '../pages/Settings'
+import Login from '../pages/Login'
 
 function AppRoutes() {
   return (
-    <BrowserRouter>
-
-      <Routes>
-
-        <Route path="/" element={<Login />} />
-
-        <Route element={<MainLayout />}>
-
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/sync" element={<Sync />} />
-          <Route path="/environments" element={<Environments />} />
-          <Route path="/compare" element={<Compare />} />
-          <Route path="/logs" element={<Logs />} />
-          <Route path="/settings" element={<Settings />} />
-
-        </Route>
-
-      </Routes>
-
-    </BrowserRouter>
-  );
+    <Routes>
+      <Route path="/" element={<AuthLayout />}>
+        <Route path="login" element={<Login />} />
+      </Route>
+      <Route path="/" element={<MainLayout />}>
+        <Route index element={<Navigate to="/dashboard" replace />} />
+        <Route path="dashboard"    element={<Dashboard />} />
+        <Route path="environments" element={<Environments />} />
+        <Route path="compare"      element={<Compare />} />
+        <Route path="sync"         element={<Sync />} />
+        <Route path="logs"         element={<Logs />} />
+        <Route path="settings"     element={<Settings />} />
+      </Route>
+    </Routes>
+  )
 }
 
-export default AppRoutes;
+export default AppRoutes

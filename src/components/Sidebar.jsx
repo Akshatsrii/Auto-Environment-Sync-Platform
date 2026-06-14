@@ -1,97 +1,75 @@
-import {
-  LayoutDashboard,
-  GitBranch,
-  Boxes,
-  GitCompare,
-  FileText,
-  Settings,
-} from "lucide-react";
+import { NavLink } from 'react-router-dom'
 
-import { NavLink } from "react-router-dom";
+const links = [
+  { to: '/dashboard',    label: 'Dashboard' },
+  { to: '/environments', label: 'Environments' },
+  { to: '/compare',      label: 'Compare' },
+  { to: '/sync',         label: 'Sync' },
+  { to: '/logs',         label: 'Logs' },
+  { to: '/settings',     label: 'Settings' },
+]
 
 function Sidebar() {
-  const links = [
-    {
-      name: "Dashboard",
-      path: "/dashboard",
-      icon: LayoutDashboard,
-    },
-    {
-      name: "Sync",
-      path: "/sync",
-      icon: GitBranch,
-    },
-    {
-      name: "Environments",
-      path: "/environments",
-      icon: Boxes,
-    },
-    {
-      name: "Compare",
-      path: "/compare",
-      icon: GitCompare,
-    },
-    {
-      name: "Logs",
-      path: "/logs",
-      icon: FileText,
-    },
-    {
-      name: "Settings",
-      path: "/settings",
-      icon: Settings,
-    },
-  ];
-
   return (
-    <aside className="w-72 min-h-screen bg-white border-r border-slate-200 shadow-sm">
-
-      {/* Logo */}
-
-      <div className="p-6 border-b border-slate-200">
-
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">
-          DevSync
-        </h1>
-
-        <p className="text-sm text-slate-500 mt-2">
-          Auto Environment Sync Platform
-        </p>
-
+    <aside style={{
+      width: '220px',
+      minHeight: '100vh',
+      background: '#ffffff',
+      borderRight: '1px solid #bfdbfe',
+      display: 'flex',
+      flexDirection: 'column',
+      flexShrink: 0,
+    }}>
+      <div style={{
+        padding: '24px 20px',
+        borderBottom: '1px solid #bfdbfe',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '10px',
+      }}>
+        <div style={{
+          width: '30px', height: '30px',
+          background: '#3b82f6',
+          borderRadius: '8px',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <span style={{ color: '#fff', fontSize: '12px', fontWeight: 700 }}>DS</span>
+        </div>
+        <span style={{ color: '#1e40af', fontWeight: 700, fontSize: '15px' }}>DevSync</span>
       </div>
 
-      {/* Navigation */}
-
-      <nav className="p-4 space-y-2">
-
-        {links.map((link) => {
-          const Icon = link.icon;
-
-          return (
-            <NavLink
-              key={link.path}
-              to={link.path}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
-                  isActive
-                    ? "bg-blue-50 text-blue-600 border border-blue-100 font-medium"
-                    : "text-slate-600 hover:bg-slate-100"
-                }`
-              }
-            >
-              <Icon size={20} />
-
-              <span>{link.name}</span>
-            </NavLink>
-          );
-        })}
-
+      <nav style={{ flex: 1, padding: '12px 0' }}>
+        {links.map(link => (
+          <NavLink
+            key={link.to}
+            to={link.to}
+            style={({ isActive }) => ({
+              display: 'flex',
+              alignItems: 'center',
+              padding: '10px 20px',
+              color: isActive ? '#1d4ed8' : '#64748b',
+              textDecoration: 'none',
+              background: isActive ? '#dbeafe' : 'transparent',
+              borderLeft: isActive ? '3px solid #3b82f6' : '3px solid transparent',
+              fontSize: '13px',
+              fontWeight: isActive ? 600 : 400,
+            })}
+          >
+            {link.label}
+          </NavLink>
+        ))}
       </nav>
 
-
-
+      <div style={{
+        padding: '16px 20px',
+        borderTop: '1px solid #bfdbfe',
+        color: '#94a3b8',
+        fontSize: '11px',
+      }}>
+        v1.0.0
+      </div>
     </aside>
-  );
+  )
 }
 
-export default Sidebar;
+export default Sidebar
