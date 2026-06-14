@@ -1,149 +1,117 @@
 function Compare() {
+  const envA = {
+    label: 'Environment A',
+    tag: 'Production',
+    tagBg: '#dbeafe', tagColor: '#1d4ed8',
+    rows: [
+      { key: 'Node Version', value: 'v20',        valueColor: '#1e293b' },
+      { key: 'MongoDB',      value: 'Available',  valueColor: '#16a34a' },
+      { key: 'Redis',        value: 'Available',  valueColor: '#16a34a' },
+      { key: 'Docker',       value: 'Configured', valueColor: '#16a34a' },
+    ],
+  }
+
+  const envB = {
+    label: 'Environment B',
+    tag: 'Development',
+    tagBg: '#f3e8ff', tagColor: '#9333ea',
+    rows: [
+      { key: 'Node Version', value: 'v22',        valueColor: '#1e293b' },
+      { key: 'MongoDB',      value: 'Available',  valueColor: '#16a34a' },
+      { key: 'Redis',        value: 'Missing',    valueColor: '#dc2626' },
+      { key: 'Docker',       value: 'Configured', valueColor: '#16a34a' },
+    ],
+  }
+
+  const summary = [
+    { text: '✓ Both environments support MongoDB',          bg: '#f0fdf4', border: '#bbf7d0', color: '#16a34a' },
+    { text: '⚠ Redis missing in Environment B',            bg: '#fefce8', border: '#fef08a', color: '#ca8a04' },
+    { text: 'ℹ Environment B uses newer Node.js version',  bg: '#eff6ff', border: '#bfdbfe', color: '#1d4ed8' },
+  ]
+
+  const card = (env) => (
+    <div style={{
+      background: '#ffffff',
+      border: '1px solid #bfdbfe',
+      borderRadius: '12px',
+      padding: '20px',
+      boxShadow: '0 1px 4px rgba(59,130,246,0.07)',
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+        <h2 style={{ fontSize: '14px', fontWeight: 600, color: '#1e40af' }}>{env.label}</h2>
+        <span style={{
+          background: env.tagBg, color: env.tagColor,
+          fontSize: '12px', fontWeight: 600,
+          padding: '3px 10px', borderRadius: '20px',
+        }}>
+          {env.tag}
+        </span>
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+        {env.rows.map((row, i) => (
+          <div key={row.key} style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            padding: '12px 0',
+            borderBottom: i < env.rows.length - 1 ? '1px solid #f1f5f9' : 'none',
+          }}>
+            <span style={{ fontSize: '13px', color: '#64748b' }}>{row.key}</span>
+            <span style={{ fontSize: '13px', fontWeight: 600, color: row.valueColor }}>{row.value}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+
   return (
-    <div className="space-y-6">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
 
       {/* Header */}
-
       <div>
-        <h1 className="text-4xl font-bold text-slate-900">
+        <h1 style={{ fontSize: '22px', fontWeight: 700, color: '#1e40af', marginBottom: '4px' }}>
           Compare Environments
         </h1>
-
-        <p className="text-slate-500 mt-2">
+        <p style={{ color: '#64748b', fontSize: '13px' }}>
           Compare two repository environments side by side.
         </p>
       </div>
 
       {/* Compare Cards */}
-
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-
-        {/* Environment A */}
-
-        <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
-
-          <div className="flex items-center justify-between mb-5">
-
-            <h2 className="text-xl font-semibold text-slate-900">
-              Environment A
-            </h2>
-
-            <span className="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-sm">
-              Production
-            </span>
-
-          </div>
-
-          <div className="space-y-4">
-
-            <div className="flex justify-between border-b border-slate-100 pb-3">
-              <span className="text-slate-500">Node Version</span>
-              <span className="font-semibold">v20</span>
-            </div>
-
-            <div className="flex justify-between border-b border-slate-100 pb-3">
-              <span className="text-slate-500">MongoDB</span>
-              <span className="text-green-600 font-medium">
-                Available
-              </span>
-            </div>
-
-            <div className="flex justify-between border-b border-slate-100 pb-3">
-              <span className="text-slate-500">Redis</span>
-              <span className="text-green-600 font-medium">
-                Available
-              </span>
-            </div>
-
-            <div className="flex justify-between">
-              <span className="text-slate-500">Docker</span>
-              <span className="text-green-600 font-medium">
-                Configured
-              </span>
-            </div>
-
-          </div>
-
-        </div>
-
-        {/* Environment B */}
-
-        <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
-
-          <div className="flex items-center justify-between mb-5">
-
-            <h2 className="text-xl font-semibold text-slate-900">
-              Environment B
-            </h2>
-
-            <span className="px-3 py-1 rounded-full bg-purple-100 text-purple-700 text-sm">
-              Development
-            </span>
-
-          </div>
-
-          <div className="space-y-4">
-
-            <div className="flex justify-between border-b border-slate-100 pb-3">
-              <span className="text-slate-500">Node Version</span>
-              <span className="font-semibold">v22</span>
-            </div>
-
-            <div className="flex justify-between border-b border-slate-100 pb-3">
-              <span className="text-slate-500">MongoDB</span>
-              <span className="text-green-600 font-medium">
-                Available
-              </span>
-            </div>
-
-            <div className="flex justify-between border-b border-slate-100 pb-3">
-              <span className="text-slate-500">Redis</span>
-              <span className="text-red-500 font-medium">
-                Missing
-              </span>
-            </div>
-
-            <div className="flex justify-between">
-              <span className="text-slate-500">Docker</span>
-              <span className="text-green-600 font-medium">
-                Configured
-              </span>
-            </div>
-
-          </div>
-
-        </div>
-
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+        {card(envA)}
+        {card(envB)}
       </div>
 
-      {/* Comparison Summary */}
-
-      <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
-
-        <h2 className="text-xl font-semibold mb-5 text-slate-900">
+      {/* Summary */}
+      <div style={{
+        background: '#ffffff',
+        border: '1px solid #bfdbfe',
+        borderRadius: '12px',
+        padding: '20px',
+        boxShadow: '0 1px 4px rgba(59,130,246,0.07)',
+      }}>
+        <h2 style={{ fontSize: '14px', fontWeight: 600, color: '#1e40af', marginBottom: '16px' }}>
           Comparison Summary
         </h2>
-
-        <div className="space-y-3">
-
-          <div className="bg-green-50 border border-green-200 rounded-xl p-4 text-green-700">
-            ✓ Both environments support MongoDB
-          </div>
-
-          <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 text-yellow-700">
-            ⚠ Redis missing in Environment B
-          </div>
-
-          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-blue-700">
-            ℹ Environment B uses newer Node.js version
-          </div>
-
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          {summary.map((item, i) => (
+            <div key={i} style={{
+              background: item.bg,
+              border: `1px solid ${item.border}`,
+              borderRadius: '8px',
+              padding: '10px 14px',
+              fontSize: '13px',
+              color: item.color,
+            }}>
+              {item.text}
+            </div>
+          ))}
         </div>
-
       </div>
 
     </div>
-  );
+  )
 }
 
-export default Compare;
+export default Compare

@@ -1,115 +1,130 @@
 function Settings() {
   return (
-    <div className="space-y-6">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
 
       {/* Header */}
-
       <div>
-        <h1 className="text-4xl font-bold text-slate-900">
+        <h1 style={{ fontSize: '22px', fontWeight: 700, color: '#1e40af', marginBottom: '4px' }}>
           Settings
         </h1>
-
-        <p className="text-slate-500 mt-2">
+        <p style={{ color: '#64748b', fontSize: '13px' }}>
           Manage your DevSync preferences and integrations.
         </p>
       </div>
 
       {/* GitHub Integration */}
-
-      <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
-
-        <h2 className="text-xl font-semibold mb-4 text-slate-900">
+      <div style={{
+        background: '#ffffff',
+        border: '1px solid #bfdbfe',
+        borderRadius: '12px',
+        padding: '20px',
+        boxShadow: '0 1px 4px rgba(59,130,246,0.07)',
+      }}>
+        <h2 style={{ fontSize: '14px', fontWeight: 600, color: '#1e40af', marginBottom: '16px' }}>
           GitHub Integration
         </h2>
-
-        <label className="block text-sm text-slate-500 mb-2">
+        <label style={{ display: 'block', fontSize: '12px', color: '#64748b', marginBottom: '8px' }}>
           GitHub Personal Access Token
         </label>
-
         <input
           type="password"
           placeholder="Enter GitHub Token"
-          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+          style={{
+            width: '100%',
+            background: '#f0f9ff',
+            border: '1px solid #bfdbfe',
+            borderRadius: '8px',
+            padding: '10px 14px',
+            fontSize: '13px',
+            color: '#1e293b',
+            fontFamily: 'inherit',
+            outline: 'none',
+            boxSizing: 'border-box',
+          }}
         />
-
       </div>
 
       {/* Notifications */}
-
-      <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
-
-        <h2 className="text-xl font-semibold mb-5 text-slate-900">
+      <div style={{
+        background: '#ffffff',
+        border: '1px solid #bfdbfe',
+        borderRadius: '12px',
+        padding: '20px',
+        boxShadow: '0 1px 4px rgba(59,130,246,0.07)',
+      }}>
+        <h2 style={{ fontSize: '14px', fontWeight: 600, color: '#1e40af', marginBottom: '16px' }}>
           Notifications
         </h2>
-
-        <div className="space-y-4">
-
-          <label className="flex items-center gap-3">
-            <input
-              type="checkbox"
-              className="w-4 h-4"
-            />
-            <span>Email Notifications</span>
-          </label>
-
-          <label className="flex items-center gap-3">
-            <input
-              type="checkbox"
-              className="w-4 h-4"
-            />
-            <span>Repository Scan Alerts</span>
-          </label>
-
-          <label className="flex items-center gap-3">
-            <input
-              type="checkbox"
-              className="w-4 h-4"
-            />
-            <span>Environment Sync Updates</span>
-          </label>
-
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+          {['Email Notifications', 'Repository Scan Alerts', 'Environment Sync Updates'].map(label => (
+            <label key={label} style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
+              <input
+                type="checkbox"
+                style={{ width: '15px', height: '15px', accentColor: '#3b82f6' }}
+              />
+              <span style={{ fontSize: '13px', color: '#334155' }}>{label}</span>
+            </label>
+          ))}
         </div>
-
       </div>
 
       {/* Preferences */}
-
-      <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
-
-        <h2 className="text-xl font-semibold mb-5 text-slate-900">
+      <div style={{
+        background: '#ffffff',
+        border: '1px solid #bfdbfe',
+        borderRadius: '12px',
+        padding: '20px',
+        boxShadow: '0 1px 4px rgba(59,130,246,0.07)',
+      }}>
+        <h2 style={{ fontSize: '14px', fontWeight: 600, color: '#1e40af', marginBottom: '16px' }}>
           Preferences
         </h2>
-
-        <div className="space-y-4">
-
-          <div>
-            <label className="block text-sm text-slate-500 mb-2">
-              Default Environment
-            </label>
-
-            <select className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3">
-              <option>Development</option>
-              <option>Testing</option>
-              <option>Production</option>
-            </select>
-          </div>
-
-        </div>
-
+        <label style={{ display: 'block', fontSize: '12px', color: '#64748b', marginBottom: '8px' }}>
+          Default Environment
+        </label>
+        <select style={{
+          width: '100%',
+          background: '#f0f9ff',
+          border: '1px solid #bfdbfe',
+          borderRadius: '8px',
+          padding: '10px 14px',
+          fontSize: '13px',
+          color: '#1e293b',
+          fontFamily: 'inherit',
+          outline: 'none',
+          boxSizing: 'border-box',
+        }}>
+          <option>Development</option>
+          <option>Testing</option>
+          <option>Production</option>
+        </select>
       </div>
 
-      {/* Save Button */}
-
-      <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
-
-        <button className="px-8 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 text-white hover:scale-105 transition">
+      {/* Save */}
+      <div style={{
+        background: '#ffffff',
+        border: '1px solid #bfdbfe',
+        borderRadius: '12px',
+        padding: '20px',
+        boxShadow: '0 1px 4px rgba(59,130,246,0.07)',
+      }}>
+        <button style={{
+          background: '#3b82f6',
+          color: '#fff',
+          border: 'none',
+          borderRadius: '8px',
+          padding: '11px 28px',
+          fontSize: '14px',
+          fontWeight: 600,
+          fontFamily: 'inherit',
+          cursor: 'pointer',
+        }}>
           Save Settings
         </button>
-
       </div>
 
     </div>
-  );
+  )
 }
 
-export default Settings;
+export default Settings
