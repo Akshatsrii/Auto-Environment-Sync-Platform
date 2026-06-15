@@ -129,6 +129,67 @@ function Dashboard() {
         </div>
       </div>
 
+      {/* Drift Alerts */}
+
+<div
+  style={{
+    background: "#ffffff",
+    border: "1px solid #bfdbfe",
+    borderRadius: "12px",
+    padding: "20px",
+    boxShadow: "0 1px 4px rgba(59,130,246,0.07)",
+  }}
+>
+  <h2
+    style={{
+      color: "#1e40af",
+      fontSize: "14px",
+      fontWeight: 600,
+      marginBottom: "16px",
+    }}
+  >
+    Drift Alerts
+  </h2>
+
+  <div
+    style={{
+      background: "#fef2f2",
+      border: "1px solid #fecaca",
+      padding: "12px",
+      borderRadius: "8px",
+      color: "#dc2626",
+      marginBottom: "10px",
+    }}
+  >
+    Production environment missing REDIS_URL
+  </div>
+
+  <div
+    style={{
+      background: "#fffbeb",
+      border: "1px solid #fde68a",
+      padding: "12px",
+      borderRadius: "8px",
+      color: "#ca8a04",
+      marginBottom: "10px",
+    }}
+  >
+    Node version mismatch detected
+  </div>
+
+  <div
+    style={{
+      background: "#eff6ff",
+      border: "1px solid #bfdbfe",
+      padding: "12px",
+      borderRadius: "8px",
+      color: "#2563eb",
+    }}
+  >
+    Docker image requires update
+  </div>
+</div>
+
       {/* Quick Actions */}
       <div style={{
         background: '#ffffff',

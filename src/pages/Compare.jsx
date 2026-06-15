@@ -1,3 +1,4 @@
+import { useState } from "react";
 function Compare() {
   const envA = {
     label: 'Environment A',
@@ -63,6 +64,8 @@ function Compare() {
       </div>
     </div>
   )
+  const [environmentA, setEnvironmentA] = useState("Production");
+const [environmentB, setEnvironmentB] = useState("Development");
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
@@ -77,11 +80,141 @@ function Compare() {
         </p>
       </div>
 
+      <div
+  style={{
+    background: "#ffffff",
+    border: "1px solid #bfdbfe",
+    borderRadius: "12px",
+    padding: "20px",
+  }}
+>
+  <div
+    style={{
+      display: "flex",
+      gap: "16px",
+    }}
+  >
+    <select
+      value={environmentA}
+      onChange={(e) => setEnvironmentA(e.target.value)}
+      style={{
+        padding: "10px",
+        border: "1px solid #cbd5e1",
+        borderRadius: "8px",
+      }}
+    >
+      <option>Production</option>
+      <option>Development</option>
+      <option>Staging</option>
+    </select>
+
+    <select
+      value={environmentB}
+      onChange={(e) => setEnvironmentB(e.target.value)}
+      style={{
+        padding: "10px",
+        border: "1px solid #cbd5e1",
+        borderRadius: "8px",
+      }}
+    >
+      <option>Development</option>
+      <option>Production</option>
+      <option>Staging</option>
+    </select>
+    <button
+  style={{
+    background: "#2563eb",
+    color: "#ffffff",
+    border: "none",
+    borderRadius: "8px",
+    padding: "10px 16px",
+    cursor: "pointer",
+    fontWeight: 500,
+  }}
+>
+  Compare
+</button>
+  </div>
+</div>
+
       {/* Compare Cards */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
         {card(envA)}
         {card(envB)}
       </div>
+
+      {/* Difference Table */}
+
+<div
+  style={{
+    background: "#ffffff",
+    border: "1px solid #bfdbfe",
+    borderRadius: "12px",
+    padding: "20px",
+  }}
+>
+  <h2
+    style={{
+      color: "#1e40af",
+      fontSize: "14px",
+      fontWeight: 600,
+      marginBottom: "16px",
+    }}
+  >
+    Difference Table
+  </h2>
+
+  <table
+    style={{
+      width: "100%",
+      borderCollapse: "collapse",
+    }}
+  >
+    <thead>
+      <tr>
+        <th style={{ textAlign: "left", padding: "12px" }}>
+          Property
+        </th>
+
+        <th style={{ textAlign: "left", padding: "12px" }}>
+          Environment A
+        </th>
+
+        <th style={{ textAlign: "left", padding: "12px" }}>
+          Environment B
+        </th>
+      </tr>
+    </thead>
+
+    <tbody>
+
+      <tr style={{ borderTop: "1px solid #e2e8f0" }}>
+        <td style={{ padding: "12px" }}>Node Version</td>
+        <td style={{ padding: "12px" }}>v20</td>
+        <td style={{ padding: "12px" }}>v22</td>
+      </tr>
+
+      <tr style={{ borderTop: "1px solid #e2e8f0" }}>
+        <td style={{ padding: "12px" }}>MongoDB</td>
+        <td style={{ padding: "12px" }}>Available</td>
+        <td style={{ padding: "12px" }}>Available</td>
+      </tr>
+
+      <tr style={{ borderTop: "1px solid #e2e8f0" }}>
+        <td style={{ padding: "12px" }}>Redis</td>
+        <td style={{ padding: "12px" }}>Available</td>
+        <td style={{ padding: "12px" }}>Missing</td>
+      </tr>
+
+      <tr style={{ borderTop: "1px solid #e2e8f0" }}>
+        <td style={{ padding: "12px" }}>Docker</td>
+        <td style={{ padding: "12px" }}>Configured</td>
+        <td style={{ padding: "12px" }}>Configured</td>
+      </tr>
+
+    </tbody>
+  </table>
+</div>
 
       {/* Summary */}
       <div style={{

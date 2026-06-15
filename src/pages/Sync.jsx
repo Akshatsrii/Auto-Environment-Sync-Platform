@@ -1,3 +1,4 @@
+import { useState } from "react";
 function Sync() {
   const workflow = [
     { label: 'Repository Connected',   color: '#16a34a' },
@@ -19,6 +20,23 @@ function Sync() {
     { label: 'Language',   value: 'JavaScript' },
   ]
 
+  const changes = [
+  {
+    type: "Add",
+    item: "REDIS_URL variable",
+  },
+  {
+    type: "Update",
+    item: "NODE_VERSION",
+  },
+  {
+    type: "Delete",
+    item: "OLD_API_KEY",
+  },
+];
+const [repoUrl, setRepoUrl] = useState("");
+const [analyzed, setAnalyzed] = useState(false);
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
 
@@ -27,9 +45,14 @@ function Sync() {
         <h1 style={{ fontSize: '22px', fontWeight: 700, color: '#1e40af', marginBottom: '4px' }}>
           Sync Repository
         </h1>
-        <p style={{ color: '#64748b', fontSize: '13px' }}>
-          Analyze repositories and generate environments.
-        </p>
+       <div>
+  <h1>Sync Repository</h1>
+
+  <p>
+    Analyze repositories and generate environments.
+  </p>
+
+</div>
       </div>
 
       {/* GitHub URL Input */}
@@ -46,6 +69,8 @@ function Sync() {
         <input
           type="text"
           placeholder="https://github.com/user/repository"
+          value={repoUrl}
+onChange={(e) => setRepoUrl(e.target.value)}
           style={{
             width: '100%',
             background: '#f0f9ff',
@@ -59,7 +84,11 @@ function Sync() {
             boxSizing: 'border-box',
           }}
         />
-        <button style={{
+        <button onClick={() => {
+  if (repoUrl.trim() !== "") {
+    setAnalyzed(true);
+  }
+}}   style={{
           marginTop: '12px',
           background: '#3b82f6',
           color: '#fff',
@@ -171,9 +200,74 @@ function Sync() {
             </span>
           ))}
         </div>
-      </div>
+        </div>
 
-    </div>
+        {/* Changes Preview */}
+
+<div
+  style={{
+    background: "#ffffff",
+    border: "1px solid #bfdbfe",
+    borderRadius: "12px",
+    padding: "20px",
+    boxShadow: "0 1px 4px rgba(59,130,246,0.07)",
+  }}
+>
+  <h2
+    style={{
+      fontSize: "14px",
+      fontWeight: 600,
+      color: "#1e40af",
+      marginBottom: "16px",
+    }}
+  >
+    Changes Preview
+  </h2>
+
+  {changes.map((change, index) => (
+  <div
+    key={index}
+    style={{
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      padding: "14px 12px",
+      marginBottom: "8px",
+      background: "#f8fafc",
+      border: "1px solid #e2e8f0",
+      borderRadius: "8px",
+    }}
+  >
+    <span>{change.item}</span>
+
+    <span
+      style={{
+        background:
+          change.type === "Add"
+            ? "#dcfce7"
+            : change.type === "Update"
+            ? "#dbeafe"
+            : "#fee2e2",
+
+        color:
+          change.type === "Add"
+            ? "#16a34a"
+            : change.type === "Update"
+            ? "#2563eb"
+            : "#dc2626",
+
+        padding: "4px 10px",
+        borderRadius: "20px",
+        fontSize: "12px",
+        fontWeight: 600,
+      }}
+    >
+      {change.type}
+    </span>
+  </div>
+))}
+</div>
+      </div>
   )
 }
 
