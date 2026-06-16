@@ -1,262 +1,119 @@
-import { useState } from "react";
+import { useState } from 'react'
+
 function Environments() {
   const services = ['Node.js', 'MongoDB', 'Redis', 'Docker']
-
   const files = ['Dockerfile', 'docker-compose.yml', '.env.example', 'README.md']
- const [environments, setEnvironments] = useState([
-  {
-    name: "Development",
-    status: "Active",
-    variables: 24,
-  },
-  {
-    name: "Staging",
-    status: "Active",
-    variables: 18,
-  },
-  {
-    name: "Production",
-    status: "Warning",
-    variables: 20,
-  },
-]);
-const [showModal, setShowModal] = useState(false);
-const [envName, setEnvName] = useState("");
-const [envVariables, setEnvVariables] = useState("");
-const [envStatus, setEnvStatus] = useState("Active");
-const handleAddEnvironment = () => {
-  if (!envName || !envVariables) return;
 
-  const newEnvironment = {
-    name: envName,
-    variables: Number(envVariables),
-    status: envStatus,
-  };
+  const [environments, setEnvironments] = useState([
+    { name: 'Development', status: 'Active',  variables: 24 },
+    { name: 'Staging',     status: 'Active',  variables: 18 },
+    { name: 'Production',  status: 'Warning', variables: 20 },
+  ])
 
-  setEnvironments([...environments, newEnvironment]);
+  const [showModal, setShowModal]       = useState(false)
+  const [envName, setEnvName]           = useState('')
+  const [envVariables, setEnvVariables] = useState('')
+  const [envStatus, setEnvStatus]       = useState('Active')
 
-  setEnvName("");
-  setEnvVariables("");
-  setEnvStatus("Active");
-
-  setShowModal(false);
-};
+  const handleAddEnvironment = () => {
+    if (!envName || !envVariables) return
+    setEnvironments([...environments, { name: envName, variables: Number(envVariables), status: envStatus }])
+    setEnvName('')
+    setEnvVariables('')
+    setEnvStatus('Active')
+    setShowModal(false)
+  }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <div className="flex flex-col gap-6">
 
       {/* Header */}
       <div>
-        <h1 style={{ fontSize: '22px', fontWeight: 700, color: '#1e40af', marginBottom: '4px' }}>
-          Environment Overview
-        </h1>
-        <p style={{ color: '#64748b', fontSize: '13px' }}>
-          Generated environment configuration and repository details.
-        </p>
+        <h1 className="text-xl font-bold text-blue-800 mb-1">Environment Overview</h1>
+        <p className="text-slate-500 text-sm">Generated environment configuration and repository details.</p>
       </div>
 
-      <div
-  style={{
-    display: "flex",
-    justifyContent: "flex-end",
-  }}
->
-  <button
-  onClick={() => setShowModal(true)}
-  style={{
-    background: "#2563eb",
-    color: "#ffffff",
-    border: "none",
-    borderRadius: "8px",
-    padding: "10px 16px",
-    cursor: "pointer",
-    fontWeight: 500,
-  }}
->
-  Add Environment
-</button>
-</div>
+      {/* Add Button */}
+      <div className="flex justify-end">
+        <button
+          onClick={() => setShowModal(true)}
+          className="bg-blue-600 text-white text-sm font-medium px-4 py-2.5 rounded-lg cursor-pointer hover:bg-blue-700 transition"
+        >
+          + Add Environment
+        </button>
+      </div>
 
       {/* Environment Cards */}
+      <div className="grid grid-cols-3 gap-4">
+        {environments.map(env => (
+          <div key={env.name} className="bg-white border border-blue-200 rounded-xl p-5 shadow-sm">
+            <h3 className="text-sm font-semibold text-blue-800 mb-2">{env.name}</h3>
+            <p className="text-slate-500 text-sm mb-3">Variables: {env.variables}</p>
+            <span className={`text-xs font-semibold px-3 py-1 rounded-full ${
+              env.status === 'Active'
+                ? 'bg-green-100 text-green-700'
+                : 'bg-yellow-100 text-yellow-700'
+            }`}>
+              {env.status}
+            </span>
+          </div>
+        ))}
+      </div>
 
-<div
-  style={{
-    display: "grid",
-    gridTemplateColumns: "repeat(3, 1fr)",
-    gap: "16px",
-  }}
->
-  {environments.map((env) => (
-    <div
-      key={env.name}
-      style={{
-        background: "#ffffff",
-        border: "1px solid #bfdbfe",
-        borderRadius: "12px",
-        padding: "20px",
-        boxShadow: "0 1px 4px rgba(59,130,246,0.07)",
-      }}
-    >
-      <h3
-        style={{
-          color: "#1e40af",
-          fontWeight: 600,
-          marginBottom: "10px",
-        }}
-      >
-        {env.name}
-      </h3>
-
-      <p style={{ color: "#64748b", fontSize: "13px" }}>
-        Variables: {env.variables}
-      </p>
-
-      <p
-        style={{
-          marginTop: "10px",
-          color:
-            env.status === "Active"
-              ? "#16a34a"
-              : "#ca8a04",
-          fontWeight: 600,
-        }}
-      >
-        {env.status}
-      </p>
-    </div>
-  ))}
-</div>
-
-{/* Environment Table */}
-
-<div
-  style={{
-    background: "#ffffff",
-    border: "1px solid #bfdbfe",
-    borderRadius: "12px",
-    padding: "20px",
-    boxShadow: "0 1px 4px rgba(59,130,246,0.07)",
-  }}
->
-  <h2
-    style={{
-      color: "#1e40af",
-      fontSize: "14px",
-      fontWeight: 600,
-      marginBottom: "16px",
-    }}
-  >
-    Environment List
-  </h2>
-
-  <table
-    style={{
-      width: "100%",
-      borderCollapse: "collapse",
-    }}
-  >
-    <thead>
-      <tr>
-        <th style={{ textAlign: "left", padding: "12px" }}>
-          Environment
-        </th>
-
-        <th style={{ textAlign: "left", padding: "12px" }}>
-          Variables
-        </th>
-
-        <th style={{ textAlign: "left", padding: "12px" }}>
-          Status
-        </th>
-      </tr>
-    </thead>
-
-    <tbody>
-      {environments.map((env) => (
-        <tr
-          key={env.name}
-          style={{
-            borderTop: "1px solid #e2e8f0",
-          }}
-        >
-          <td style={{ padding: "12px" }}>
-            {env.name}
-          </td>
-
-          <td style={{ padding: "12px" }}>
-            {env.variables}
-          </td>
-
-          <td style={{ padding: "12px" }}>
-            {env.status}
-          </td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-</div>
+      {/* Environment Table */}
+      <div className="bg-white border border-blue-200 rounded-xl p-5 shadow-sm">
+        <h2 className="text-sm font-semibold text-blue-800 mb-4">Environment List</h2>
+        <table className="w-full border-collapse">
+          <thead>
+            <tr>
+              <th className="text-left text-xs font-semibold text-slate-500 px-3 py-3">Environment</th>
+              <th className="text-left text-xs font-semibold text-slate-500 px-3 py-3">Variables</th>
+              <th className="text-left text-xs font-semibold text-slate-500 px-3 py-3">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {environments.map(env => (
+              <tr key={env.name} className="border-t border-slate-100">
+                <td className="px-3 py-3 text-sm font-medium text-slate-700">{env.name}</td>
+                <td className="px-3 py-3 text-sm text-slate-600">{env.variables}</td>
+                <td className="px-3 py-3">
+                  <span className={`text-xs font-semibold px-3 py-1 rounded-full ${
+                    env.status === 'Active'
+                      ? 'bg-green-100 text-green-700'
+                      : 'bg-yellow-100 text-yellow-700'
+                  }`}>
+                    {env.status}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       {/* Health Score */}
-      <div style={{
-        background: '#ffffff',
-        border: '1px solid #bfdbfe',
-        borderRadius: '12px',
-        padding: '24px',
-        boxShadow: '0 1px 4px rgba(59,130,246,0.07)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-      }}>
+      <div className="bg-white border border-blue-200 rounded-xl p-6 shadow-sm flex items-center justify-between">
         <div>
-          <h2 style={{ fontSize: '15px', fontWeight: 600, color: '#1e40af', marginBottom: '6px' }}>
-            Health Score
-          </h2>
-          <p style={{ color: '#64748b', fontSize: '13px' }}>
-            Environment is ready for deployment
-          </p>
+          <h2 className="text-sm font-semibold text-blue-800 mb-1">Health Score</h2>
+          <p className="text-slate-500 text-sm">Environment is ready for deployment</p>
         </div>
-        <div style={{ textAlign: 'right' }}>
-          <div style={{ fontSize: '48px', fontWeight: 700, color: '#16a34a', lineHeight: 1 }}>
-            92%
-          </div>
-          <span style={{
-            fontSize: '12px', fontWeight: 600,
-            color: '#16a34a',
-            background: '#dcfce7',
-            padding: '3px 10px',
-            borderRadius: '20px',
-            marginTop: '6px',
-            display: 'inline-block',
-          }}>
+        <div className="text-right">
+          <p className="text-5xl font-bold text-green-600 leading-none">92%</p>
+          <span className="inline-block mt-2 text-xs font-semibold bg-green-100 text-green-700 px-3 py-1 rounded-full">
             Ready
           </span>
         </div>
       </div>
 
       {/* Services + Files */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+      <div className="grid grid-cols-2 gap-4">
 
         {/* Services */}
-        <div style={{
-          background: '#ffffff',
-          border: '1px solid #bfdbfe',
-          borderRadius: '12px',
-          padding: '20px',
-          boxShadow: '0 1px 4px rgba(59,130,246,0.07)',
-        }}>
-          <h2 style={{ fontSize: '14px', fontWeight: 600, color: '#1e40af', marginBottom: '16px' }}>
-            Detected Services
-          </h2>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+        <div className="bg-white border border-blue-200 rounded-xl p-5 shadow-sm">
+          <h2 className="text-sm font-semibold text-blue-800 mb-4">Detected Services</h2>
+          <div className="flex flex-wrap gap-2">
             {services.map(service => (
-              <span key={service} style={{
-                padding: '6px 14px',
-                borderRadius: '20px',
-                background: '#dbeafe',
-                color: '#1d4ed8',
-                fontSize: '13px',
-                fontWeight: 500,
-              }}>
+              <span key={service} className="bg-blue-100 text-blue-700 text-sm font-medium px-4 py-1.5 rounded-full">
                 {service}
               </span>
             ))}
@@ -264,26 +121,11 @@ const handleAddEnvironment = () => {
         </div>
 
         {/* Files */}
-        <div style={{
-          background: '#ffffff',
-          border: '1px solid #bfdbfe',
-          borderRadius: '12px',
-          padding: '20px',
-          boxShadow: '0 1px 4px rgba(59,130,246,0.07)',
-        }}>
-          <h2 style={{ fontSize: '14px', fontWeight: 600, color: '#1e40af', marginBottom: '16px' }}>
-            Generated Files
-          </h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <div className="bg-white border border-blue-200 rounded-xl p-5 shadow-sm">
+          <h2 className="text-sm font-semibold text-blue-800 mb-4">Generated Files</h2>
+          <div className="flex flex-col gap-2">
             {files.map(file => (
-              <div key={file} style={{
-                background: '#f0f9ff',
-                border: '1px solid #bfdbfe',
-                borderRadius: '8px',
-                padding: '10px 14px',
-                fontSize: '13px',
-                color: '#334155',
-              }}>
+              <div key={file} className="bg-blue-50 border border-blue-200 rounded-lg px-4 py-2.5 text-sm text-slate-700">
                 📄 {file}
               </div>
             ))}
@@ -292,168 +134,82 @@ const handleAddEnvironment = () => {
       </div>
 
       {/* Issues */}
-      <div style={{
-        background: '#ffffff',
-        border: '1px solid #bfdbfe',
-        borderRadius: '12px',
-        padding: '20px',
-        boxShadow: '0 1px 4px rgba(59,130,246,0.07)',
-      }}>
-        <h2 style={{ fontSize: '14px', fontWeight: 600, color: '#1e40af', marginBottom: '16px' }}>
-          Detected Issues
-        </h2>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <div style={{
-            background: '#fef2f2', border: '1px solid #fecaca',
-            borderRadius: '8px', padding: '10px 14px',
-            fontSize: '13px', color: '#dc2626',
-          }}>
+      <div className="bg-white border border-blue-200 rounded-xl p-5 shadow-sm">
+        <h2 className="text-sm font-semibold text-blue-800 mb-4">Detected Issues</h2>
+        <div className="flex flex-col gap-2">
+          <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-2.5 text-sm text-red-600">
             ⚠ MongoDB service not found
           </div>
-          <div style={{
-            background: '#fefce8', border: '1px solid #fef08a',
-            borderRadius: '8px', padding: '10px 14px',
-            fontSize: '13px', color: '#ca8a04',
-          }}>
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg px-4 py-2.5 text-sm text-yellow-600">
             ⚠ Node version mismatch
           </div>
         </div>
       </div>
 
       {/* Recommendations */}
-      <div style={{
-        background: '#ffffff',
-        border: '1px solid #bfdbfe',
-        borderRadius: '12px',
-        padding: '20px',
-        boxShadow: '0 1px 4px rgba(59,130,246,0.07)',
-      }}>
-        <h2 style={{ fontSize: '14px', fontWeight: 600, color: '#1e40af', marginBottom: '16px' }}>
-          AI Recommendations
-        </h2>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+      <div className="bg-white border border-blue-200 rounded-xl p-5 shadow-sm">
+        <h2 className="text-sm font-semibold text-blue-800 mb-4">AI Recommendations</h2>
+        <div className="flex flex-col gap-2">
           {[
             'Use Node.js 22 for better compatibility',
             'Add Redis container to docker-compose.yml',
             'Create .env.example for onboarding developers',
           ].map((rec, i) => (
-            <div key={i} style={{
-              background: '#f0fdf4', border: '1px solid #bbf7d0',
-              borderRadius: '8px', padding: '10px 14px',
-              fontSize: '13px', color: '#16a34a',
-            }}>
+            <div key={i} className="bg-green-50 border border-green-200 rounded-lg px-4 py-2.5 text-sm text-green-700">
               ✓ {rec}
             </div>
           ))}
         </div>
       </div>
+
+      {/* Modal */}
       {showModal && (
-  <div
-    style={{
-      position: "fixed",
-      inset: 0,
-      background: "rgba(0,0,0,0.4)",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-    }}
-  >
-    <div
-      style={{
-        background: "#ffffff",
-        padding: "24px",
-        borderRadius: "12px",
-        width: "400px",
-      }}
-    >
-     <h2
-  style={{
-    marginBottom: "16px",
-    color: "#1e40af",
-  }}
->
-  Add Environment
-</h2>
-
-<div
-  style={{
-    display: "flex",
-    flexDirection: "column",
-    gap: "12px",
-    marginBottom: "16px",
-  }}
->
-  <input
-    type="text"
-    placeholder="Environment Name"
-    value={envName}
-    onChange={(e) => setEnvName(e.target.value)}
-    style={{
-      padding: "10px",
-      border: "1px solid #cbd5e1",
-      borderRadius: "6px",
-    }}
-  />
-
-  <input
-    type="number"
-    placeholder="Variables Count"
-    value={envVariables}
-    onChange={(e) => setEnvVariables(e.target.value)}
-    style={{
-      padding: "10px",
-      border: "1px solid #cbd5e1",
-      borderRadius: "6px",
-    }}
-  />
-
-  <select
-    value={envStatus}
-    onChange={(e) => setEnvStatus(e.target.value)}
-    style={{
-      padding: "10px",
-      border: "1px solid #cbd5e1",
-      borderRadius: "6px",
-    }}
-  >
-    <option>Active</option>
-    <option>Warning</option>
-  </select>
-</div>
-
-<button
-  onClick={handleAddEnvironment}
-  style={{
-    background: "#2563eb",
-    color: "#ffffff",
-    border: "none",
-    padding: "10px 16px",
-    borderRadius: "6px",
-    cursor: "pointer",
-    marginRight: "10px",
-  }}
->
-  Save
-</button>
-
-<button
-  onClick={() => setShowModal(false)}
-  style={{
-    background: "#e2e8f0",
-    border: "none",
-    padding: "8px 14px",
-    borderRadius: "6px",
-    cursor: "pointer",
-  }}
->
-  Close
-</button>
-    </div>
-  </div>
-)}
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl p-6 w-96 shadow-xl">
+            <h2 className="text-sm font-semibold text-blue-800 mb-4">Add Environment</h2>
+            <div className="flex flex-col gap-3 mb-5">
+              <input
+                type="text"
+                placeholder="Environment Name"
+                value={envName}
+                onChange={(e) => setEnvName(e.target.value)}
+                className="px-3 py-2.5 border border-slate-300 rounded-lg text-sm outline-none"
+              />
+              <input
+                type="number"
+                placeholder="Variables Count"
+                value={envVariables}
+                onChange={(e) => setEnvVariables(e.target.value)}
+                className="px-3 py-2.5 border border-slate-300 rounded-lg text-sm outline-none"
+              />
+              <select
+                value={envStatus}
+                onChange={(e) => setEnvStatus(e.target.value)}
+                className="px-3 py-2.5 border border-slate-300 rounded-lg text-sm outline-none"
+              >
+                <option>Active</option>
+                <option>Warning</option>
+              </select>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={handleAddEnvironment}
+                className="bg-blue-600 text-white text-sm font-medium px-5 py-2 rounded-lg cursor-pointer hover:bg-blue-700 transition"
+              >
+                Save
+              </button>
+              <button
+                onClick={() => setShowModal(false)}
+                className="bg-slate-100 text-slate-600 text-sm px-5 py-2 rounded-lg cursor-pointer hover:bg-slate-200 transition"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
-    
   )
 }
 
