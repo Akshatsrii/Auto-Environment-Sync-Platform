@@ -1,99 +1,47 @@
 function Settings() {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <div className="flex flex-col gap-6">
 
       {/* Header */}
       <div>
-        <h1 style={{ fontSize: '22px', fontWeight: 700, color: '#1e40af', marginBottom: '4px' }}>
-          Settings
-        </h1>
-        <p style={{ color: '#64748b', fontSize: '13px' }}>
-          Manage your DevSync preferences and integrations.
-        </p>
+        <h1 className="text-xl font-bold text-blue-800 mb-1">Settings</h1>
+        <p className="text-slate-500 text-sm">Manage your DevSync preferences and integrations.</p>
       </div>
 
       {/* GitHub Integration */}
-      <div style={{
-        background: '#ffffff',
-        border: '1px solid #bfdbfe',
-        borderRadius: '12px',
-        padding: '20px',
-        boxShadow: '0 1px 4px rgba(59,130,246,0.07)',
-      }}>
-        <h2 style={{ fontSize: '14px', fontWeight: 600, color: '#1e40af', marginBottom: '16px' }}>
-          GitHub Integration
-        </h2>
-        <label style={{ display: 'block', fontSize: '12px', color: '#64748b', marginBottom: '8px' }}>
+      <div className="bg-white border border-blue-200 rounded-xl p-5 shadow-sm">
+        <h2 className="text-sm font-semibold text-blue-800 mb-4">GitHub Integration</h2>
+        <label className="block text-xs text-slate-500 mb-2">
           GitHub Personal Access Token
         </label>
         <input
           type="password"
           placeholder="Enter GitHub Token"
-          style={{
-            width: '100%',
-            background: '#f0f9ff',
-            border: '1px solid #bfdbfe',
-            borderRadius: '8px',
-            padding: '10px 14px',
-            fontSize: '13px',
-            color: '#1e293b',
-            fontFamily: 'inherit',
-            outline: 'none',
-            boxSizing: 'border-box',
-          }}
+          className="w-full bg-blue-50 border border-blue-200 rounded-lg px-4 py-2.5 text-sm text-slate-700 outline-none"
         />
       </div>
 
       {/* Notifications */}
-      <div style={{
-        background: '#ffffff',
-        border: '1px solid #bfdbfe',
-        borderRadius: '12px',
-        padding: '20px',
-        boxShadow: '0 1px 4px rgba(59,130,246,0.07)',
-      }}>
-        <h2 style={{ fontSize: '14px', fontWeight: 600, color: '#1e40af', marginBottom: '16px' }}>
-          Notifications
-        </h2>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+      <div className="bg-white border border-blue-200 rounded-xl p-5 shadow-sm">
+        <h2 className="text-sm font-semibold text-blue-800 mb-4">Notifications</h2>
+        <div className="flex flex-col gap-4">
           {['Email Notifications', 'Repository Scan Alerts', 'Environment Sync Updates'].map(label => (
-            <label key={label} style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
+            <label key={label} className="flex items-center gap-3 cursor-pointer">
               <input
                 type="checkbox"
-                style={{ width: '15px', height: '15px', accentColor: '#3b82f6' }}
+                className="w-4 h-4 accent-blue-600"
               />
-              <span style={{ fontSize: '13px', color: '#334155' }}>{label}</span>
+              <span className="text-sm text-slate-700">{label}</span>
             </label>
           ))}
         </div>
       </div>
 
       {/* Preferences */}
-      <div style={{
-        background: '#ffffff',
-        border: '1px solid #bfdbfe',
-        borderRadius: '12px',
-        padding: '20px',
-        boxShadow: '0 1px 4px rgba(59,130,246,0.07)',
-      }}>
-        <h2 style={{ fontSize: '14px', fontWeight: 600, color: '#1e40af', marginBottom: '16px' }}>
-          Preferences
-        </h2>
-        <label style={{ display: 'block', fontSize: '12px', color: '#64748b', marginBottom: '8px' }}>
-          Default Environment
-        </label>
-        <select style={{
-          width: '100%',
-          background: '#f0f9ff',
-          border: '1px solid #bfdbfe',
-          borderRadius: '8px',
-          padding: '10px 14px',
-          fontSize: '13px',
-          color: '#1e293b',
-          fontFamily: 'inherit',
-          outline: 'none',
-          boxSizing: 'border-box',
-        }}>
+      <div className="bg-white border border-blue-200 rounded-xl p-5 shadow-sm">
+        <h2 className="text-sm font-semibold text-blue-800 mb-4">Preferences</h2>
+        <label className="block text-xs text-slate-500 mb-2">Default Environment</label>
+        <select className="w-full bg-blue-50 border border-blue-200 rounded-lg px-4 py-2.5 text-sm text-slate-700 outline-none">
           <option>Development</option>
           <option>Testing</option>
           <option>Production</option>
@@ -101,24 +49,8 @@ function Settings() {
       </div>
 
       {/* Save */}
-      <div style={{
-        background: '#ffffff',
-        border: '1px solid #bfdbfe',
-        borderRadius: '12px',
-        padding: '20px',
-        boxShadow: '0 1px 4px rgba(59,130,246,0.07)',
-      }}>
-        <button style={{
-          background: '#3b82f6',
-          color: '#fff',
-          border: 'none',
-          borderRadius: '8px',
-          padding: '11px 28px',
-          fontSize: '14px',
-          fontWeight: 600,
-          fontFamily: 'inherit',
-          cursor: 'pointer',
-        }}>
+      <div className="bg-white border border-blue-200 rounded-xl p-5 shadow-sm">
+        <button className="bg-blue-600 text-white text-sm font-semibold px-7 py-2.5 rounded-lg cursor-pointer hover:bg-blue-700 transition">
           Save Settings
         </button>
       </div>
