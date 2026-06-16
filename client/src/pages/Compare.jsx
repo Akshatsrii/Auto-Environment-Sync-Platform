@@ -1,242 +1,143 @@
-import { useState } from "react";
+import { useState } from 'react'
+
 function Compare() {
+  const [environmentA, setEnvironmentA] = useState('Production')
+  const [environmentB, setEnvironmentB] = useState('Development')
+
   const envA = {
     label: 'Environment A',
     tag: 'Production',
-    tagBg: '#dbeafe', tagColor: '#1d4ed8',
+    tagClass: 'bg-blue-100 text-blue-700',
     rows: [
-      { key: 'Node Version', value: 'v20',        valueColor: '#1e293b' },
-      { key: 'MongoDB',      value: 'Available',  valueColor: '#16a34a' },
-      { key: 'Redis',        value: 'Available',  valueColor: '#16a34a' },
-      { key: 'Docker',       value: 'Configured', valueColor: '#16a34a' },
+      { key: 'Node Version', value: 'v20',        valueClass: 'text-slate-800' },
+      { key: 'MongoDB',      value: 'Available',  valueClass: 'text-green-600' },
+      { key: 'Redis',        value: 'Available',  valueClass: 'text-green-600' },
+      { key: 'Docker',       value: 'Configured', valueClass: 'text-green-600' },
     ],
   }
 
   const envB = {
     label: 'Environment B',
     tag: 'Development',
-    tagBg: '#f3e8ff', tagColor: '#9333ea',
+    tagClass: 'bg-purple-100 text-purple-700',
     rows: [
-      { key: 'Node Version', value: 'v22',        valueColor: '#1e293b' },
-      { key: 'MongoDB',      value: 'Available',  valueColor: '#16a34a' },
-      { key: 'Redis',        value: 'Missing',    valueColor: '#dc2626' },
-      { key: 'Docker',       value: 'Configured', valueColor: '#16a34a' },
+      { key: 'Node Version', value: 'v22',        valueClass: 'text-slate-800' },
+      { key: 'MongoDB',      value: 'Available',  valueClass: 'text-green-600' },
+      { key: 'Redis',        value: 'Missing',    valueClass: 'text-red-500' },
+      { key: 'Docker',       value: 'Configured', valueClass: 'text-green-600' },
     ],
   }
 
   const summary = [
-    { text: '✓ Both environments support MongoDB',          bg: '#f0fdf4', border: '#bbf7d0', color: '#16a34a' },
-    { text: '⚠ Redis missing in Environment B',            bg: '#fefce8', border: '#fef08a', color: '#ca8a04' },
-    { text: 'ℹ Environment B uses newer Node.js version',  bg: '#eff6ff', border: '#bfdbfe', color: '#1d4ed8' },
+    { text: '✓ Both environments support MongoDB',         className: 'bg-green-50 border border-green-200 text-green-700' },
+    { text: '⚠ Redis missing in Environment B',           className: 'bg-yellow-50 border border-yellow-200 text-yellow-700' },
+    { text: 'ℹ Environment B uses newer Node.js version', className: 'bg-blue-50 border border-blue-200 text-blue-700' },
+  ]
+
+  const diffRows = [
+    { property: 'Node Version', a: 'v20',        b: 'v22' },
+    { property: 'MongoDB',      a: 'Available',  b: 'Available' },
+    { property: 'Redis',        a: 'Available',  b: 'Missing' },
+    { property: 'Docker',       a: 'Configured', b: 'Configured' },
   ]
 
   const card = (env) => (
-    <div style={{
-      background: '#ffffff',
-      border: '1px solid #bfdbfe',
-      borderRadius: '12px',
-      padding: '20px',
-      boxShadow: '0 1px 4px rgba(59,130,246,0.07)',
-    }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-        <h2 style={{ fontSize: '14px', fontWeight: 600, color: '#1e40af' }}>{env.label}</h2>
-        <span style={{
-          background: env.tagBg, color: env.tagColor,
-          fontSize: '12px', fontWeight: 600,
-          padding: '3px 10px', borderRadius: '20px',
-        }}>
+    <div className="bg-white border border-blue-200 rounded-xl p-5 shadow-sm">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-sm font-semibold text-blue-800">{env.label}</h2>
+        <span className={`text-xs font-semibold px-3 py-1 rounded-full ${env.tagClass}`}>
           {env.tag}
         </span>
       </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+      <div className="flex flex-col">
         {env.rows.map((row, i) => (
-          <div key={row.key} style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            padding: '12px 0',
-            borderBottom: i < env.rows.length - 1 ? '1px solid #f1f5f9' : 'none',
-          }}>
-            <span style={{ fontSize: '13px', color: '#64748b' }}>{row.key}</span>
-            <span style={{ fontSize: '13px', fontWeight: 600, color: row.valueColor }}>{row.value}</span>
+          <div
+            key={row.key}
+            className={`flex justify-between items-center py-3 ${i < env.rows.length - 1 ? 'border-b border-slate-100' : ''}`}
+          >
+            <span className="text-sm text-slate-500">{row.key}</span>
+            <span className={`text-sm font-semibold ${row.valueClass}`}>{row.value}</span>
           </div>
         ))}
       </div>
     </div>
   )
-  const [environmentA, setEnvironmentA] = useState("Production");
-const [environmentB, setEnvironmentB] = useState("Development");
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <div className="flex flex-col gap-6">
 
       {/* Header */}
       <div>
-        <h1 style={{ fontSize: '22px', fontWeight: 700, color: '#1e40af', marginBottom: '4px' }}>
-          Compare Environments
-        </h1>
-        <p style={{ color: '#64748b', fontSize: '13px' }}>
-          Compare two repository environments side by side.
-        </p>
+        <h1 className="text-xl font-bold text-blue-800 mb-1">Compare Environments</h1>
+        <p className="text-slate-500 text-sm">Compare two repository environments side by side.</p>
       </div>
 
-      <div
-  style={{
-    background: "#ffffff",
-    border: "1px solid #bfdbfe",
-    borderRadius: "12px",
-    padding: "20px",
-  }}
->
-  <div
-    style={{
-      display: "flex",
-      gap: "16px",
-    }}
-  >
-    <select
-      value={environmentA}
-      onChange={(e) => setEnvironmentA(e.target.value)}
-      style={{
-        padding: "10px",
-        border: "1px solid #cbd5e1",
-        borderRadius: "8px",
-      }}
-    >
-      <option>Production</option>
-      <option>Development</option>
-      <option>Staging</option>
-    </select>
+      {/* Selector */}
+      <div className="bg-white border border-blue-200 rounded-xl p-5">
+        <div className="flex gap-4">
+          <select
+            value={environmentA}
+            onChange={(e) => setEnvironmentA(e.target.value)}
+            className="px-3 py-2 border border-slate-300 rounded-lg text-sm text-slate-700 outline-none"
+          >
+            <option>Production</option>
+            <option>Development</option>
+            <option>Staging</option>
+          </select>
 
-    <select
-      value={environmentB}
-      onChange={(e) => setEnvironmentB(e.target.value)}
-      style={{
-        padding: "10px",
-        border: "1px solid #cbd5e1",
-        borderRadius: "8px",
-      }}
-    >
-      <option>Development</option>
-      <option>Production</option>
-      <option>Staging</option>
-    </select>
-    <button
-  style={{
-    background: "#2563eb",
-    color: "#ffffff",
-    border: "none",
-    borderRadius: "8px",
-    padding: "10px 16px",
-    cursor: "pointer",
-    fontWeight: 500,
-  }}
->
-  Compare
-</button>
-  </div>
-</div>
+          <select
+            value={environmentB}
+            onChange={(e) => setEnvironmentB(e.target.value)}
+            className="px-3 py-2 border border-slate-300 rounded-lg text-sm text-slate-700 outline-none"
+          >
+            <option>Development</option>
+            <option>Production</option>
+            <option>Staging</option>
+          </select>
+
+          <button className="bg-blue-600 text-white text-sm font-medium px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-700 transition">
+            Compare
+          </button>
+        </div>
+      </div>
 
       {/* Compare Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+      <div className="grid grid-cols-2 gap-4">
         {card(envA)}
         {card(envB)}
       </div>
 
       {/* Difference Table */}
-
-<div
-  style={{
-    background: "#ffffff",
-    border: "1px solid #bfdbfe",
-    borderRadius: "12px",
-    padding: "20px",
-  }}
->
-  <h2
-    style={{
-      color: "#1e40af",
-      fontSize: "14px",
-      fontWeight: 600,
-      marginBottom: "16px",
-    }}
-  >
-    Difference Table
-  </h2>
-
-  <table
-    style={{
-      width: "100%",
-      borderCollapse: "collapse",
-    }}
-  >
-    <thead>
-      <tr>
-        <th style={{ textAlign: "left", padding: "12px" }}>
-          Property
-        </th>
-
-        <th style={{ textAlign: "left", padding: "12px" }}>
-          Environment A
-        </th>
-
-        <th style={{ textAlign: "left", padding: "12px" }}>
-          Environment B
-        </th>
-      </tr>
-    </thead>
-
-    <tbody>
-
-      <tr style={{ borderTop: "1px solid #e2e8f0" }}>
-        <td style={{ padding: "12px" }}>Node Version</td>
-        <td style={{ padding: "12px" }}>v20</td>
-        <td style={{ padding: "12px" }}>v22</td>
-      </tr>
-
-      <tr style={{ borderTop: "1px solid #e2e8f0" }}>
-        <td style={{ padding: "12px" }}>MongoDB</td>
-        <td style={{ padding: "12px" }}>Available</td>
-        <td style={{ padding: "12px" }}>Available</td>
-      </tr>
-
-      <tr style={{ borderTop: "1px solid #e2e8f0" }}>
-        <td style={{ padding: "12px" }}>Redis</td>
-        <td style={{ padding: "12px" }}>Available</td>
-        <td style={{ padding: "12px" }}>Missing</td>
-      </tr>
-
-      <tr style={{ borderTop: "1px solid #e2e8f0" }}>
-        <td style={{ padding: "12px" }}>Docker</td>
-        <td style={{ padding: "12px" }}>Configured</td>
-        <td style={{ padding: "12px" }}>Configured</td>
-      </tr>
-
-    </tbody>
-  </table>
-</div>
+      <div className="bg-white border border-blue-200 rounded-xl p-5 shadow-sm">
+        <h2 className="text-sm font-semibold text-blue-800 mb-4">Difference Table</h2>
+        <table className="w-full border-collapse">
+          <thead>
+            <tr>
+              <th className="text-left text-xs font-semibold text-slate-500 px-3 py-3">Property</th>
+              <th className="text-left text-xs font-semibold text-slate-500 px-3 py-3">Environment A</th>
+              <th className="text-left text-xs font-semibold text-slate-500 px-3 py-3">Environment B</th>
+            </tr>
+          </thead>
+          <tbody>
+            {diffRows.map((row, i) => (
+              <tr key={i} className="border-t border-slate-100">
+                <td className="px-3 py-3 text-sm text-slate-700 font-medium">{row.property}</td>
+                <td className="px-3 py-3 text-sm text-slate-600">{row.a}</td>
+                <td className={`px-3 py-3 text-sm font-medium ${row.b === 'Missing' ? 'text-red-500' : 'text-slate-600'}`}>
+                  {row.b}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       {/* Summary */}
-      <div style={{
-        background: '#ffffff',
-        border: '1px solid #bfdbfe',
-        borderRadius: '12px',
-        padding: '20px',
-        boxShadow: '0 1px 4px rgba(59,130,246,0.07)',
-      }}>
-        <h2 style={{ fontSize: '14px', fontWeight: 600, color: '#1e40af', marginBottom: '16px' }}>
-          Comparison Summary
-        </h2>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+      <div className="bg-white border border-blue-200 rounded-xl p-5 shadow-sm">
+        <h2 className="text-sm font-semibold text-blue-800 mb-4">Comparison Summary</h2>
+        <div className="flex flex-col gap-2">
           {summary.map((item, i) => (
-            <div key={i} style={{
-              background: item.bg,
-              border: `1px solid ${item.border}`,
-              borderRadius: '8px',
-              padding: '10px 14px',
-              fontSize: '13px',
-              color: item.color,
-            }}>
+            <div key={i} className={`rounded-lg px-4 py-3 text-sm ${item.className}`}>
               {item.text}
             </div>
           ))}
