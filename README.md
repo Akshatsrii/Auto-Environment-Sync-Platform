@@ -1,27 +1,29 @@
 <div align="center">
 
-<img src="https://img.shields.io/badge/DevSync-Auto%20Environment%20Sync-6366f1?style=for-the-badge&logoColor=white" alt="DevSync Banner" height="60"/>
+# 🏦 Bank Statement Digitizer
 
-# 🔄 DevSync — Auto Environment Sync Platform
+### *Upload once. Filter forever. Export instantly.*
 
-### *Stop configuring. Start coding.*
-
-**DevSync analyzes your GitHub repositories and auto-generates fully synced, ready-to-run environment configurations — before you write a single line of code.**
+**BankDigitizer unlocks password-protected Indian bank PDFs, extracts every transaction, categorizes them automatically, and presents them in a filterable, exportable dashboard — fully serverless.**
 
 <br/>
 
 [![React](https://img.shields.io/badge/React-18.x-61DAFB?style=flat-square&logo=react&logoColor=black)](https://reactjs.org/)
 [![Vite](https://img.shields.io/badge/Vite-5.x-646CFF?style=flat-square&logo=vite)](https://vitejs.dev/)
 [![TailwindCSS](https://img.shields.io/badge/Tailwind-3.x-38BDF8?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
-[![Node.js](https://img.shields.io/badge/Node.js-Planned-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/)
-[![MongoDB](https://img.shields.io/badge/MongoDB-Planned-47A248?style=flat-square&logo=mongodb&logoColor=white)](https://mongodb.com/)
-[![License](https://img.shields.io/badge/License-Academic-blue?style=flat-square)](#license)
-[![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen?style=flat-square)](https://github.com/Riyaban583/Auto-Environment-Sync-Platform/pulls)
-[![Stars](https://img.shields.io/github/stars/Riyaban583/Auto-Environment-Sync-Platform?style=flat-square&color=yellow)](https://github.com/Riyaban583/Auto-Environment-Sync-Platform/stargazers)
+[![Firebase](https://img.shields.io/badge/Firebase-Functions_%26_Firestore-FF6F00?style=flat-square&logo=firebase&logoColor=white)](https://firebase.google.com)
+[![Node.js](https://img.shields.io/badge/Node.js-18_LTS-339933?style=flat-square&logo=nodedotjs&logoColor=white)](https://nodejs.org)
+[![Vitest](https://img.shields.io/badge/Tested-Vitest-6E9F18?style=flat-square&logo=vitest&logoColor=white)](https://vitest.dev)
+[![Status](https://img.shields.io/badge/Status-v1.0.0_Complete-22C55E?style=flat-square)](https://github.com/Akshatsrii/bank-statement-digitizer)
+[![License](https://img.shields.io/badge/License-Private-64748B?style=flat-square)](#)
 
 <br/>
 
-[🧩 Problem](#-the-problem) · [💡 Solution](#-our-solution) · [✨ Features](#-features) · [🏗 Architecture](#-system-architecture) · [🔄 Flowcharts](#-core-workflows) · [🚀 Getting Started](#-getting-started) · [👥 Contributors](#-contributors) · [🗺 Roadmap](#-roadmap)
+[🧩 Problem](#-the-problem) · [💡 Solution](#-our-solution) · [✨ Features](#-features) · [🏗 Architecture](#-system-architecture) · [🔄 Flowcharts](#-core-workflows) · [🚀 Getting Started](#-getting-started) · [📁 Structure](#-project-structure) · [🗺 Roadmap](#-roadmap)
+
+<br/>
+
+> Upload a password-protected bank PDF → get clean, categorized, searchable transactions in seconds.
 
 </div>
 
@@ -29,51 +31,51 @@
 
 ## 🧩 The Problem
 
-Every developer has experienced this moment of frustration — you clone a promising repository, run the project, and immediately hit a **wall of errors**:
+Every Indian bank delivers your account statement as a **password-protected PDF** — a format that's completely impossible to search, filter, or use in any budgeting tool.
 
 ```bash
-$ npm run dev
+# What you get from your bank:
+statement_jan_2024.pdf  ← password locked, unreadable by any tool
 
-❌ Error: Node version mismatch. Required: 18.x, Found: 16.x
-❌ MongooseError: MongoDB connection refused at localhost:27017
-❌ Error: Missing environment variable REDIS_URL
-❌ Error: Cannot find module 'dotenv'
-❌ Docker: Cannot connect to the Docker daemon
+# What you actually need:
+{ date, description, debit, credit, balance, category }[]
+← structured, searchable, filterable, exportable
 ```
 
-> **The average developer wastes 4.5 hours per week** just setting up and syncing development environments. That's over **200 hours a year** — lost to configuration, not creation.
-
-### 🔍 Root Causes We Identified
+### 🔍 Root Problems We Identified
 
 | Pain Point | Impact |
 |:-----------|:-------|
-| 🔀 **Node/Python version mismatches** | App crashes before it even starts |
-| 🗄️ **Unconfigured databases** | Missing MongoDB, Redis, or PostgreSQL connections |
-| 🔑 **Missing `.env` variables** | Silent failures that are hard to debug |
-| 🐳 **Docker misconfiguration** | Container builds fail or services don't link |
-| 📦 **Undocumented dependencies** | Hours spent reverse-engineering setup steps |
-| 👥 **Onboarding new team members** | Days lost getting a dev up and running |
+| 🔐 **Password-protected PDFs** | No tool can read them without manual intervention |
+| 🏦 **Different format per bank** | SBI, HDFC, ICICI all have unique column layouts |
+| 📅 **Inconsistent date formats** | DD/MM/YYYY vs DD-MMM-YYYY vs DD-MM-YYYY |
+| 🏷️ **No categorization** | Raw descriptions like "UPI-ZOMATO-123456" are unreadable |
+| 📤 **No export options** | Stuck inside the bank's portal forever |
+| 🔄 **Duplicate uploads** | Re-uploading the same statement creates duplicate records |
 
 ---
 
 ## 💡 Our Solution
 
-**DevSync** is an intelligent environment synchronization platform that **reads your repository**, **understands your stack**, and **generates everything you need** to start coding immediately.
+**Bank Statement Digitizer** is a full-stack serverless application that handles the **entire pipeline** from encrypted PDF to clean data:
 
 ```
-You paste a GitHub URL  →  DevSync scans the repo  →  You get a ready-to-run environment
-                                    ⬇
-         No more "works on my machine" — it works on every machine.
+You upload a PDF + password
+        ↓
+Cloud Function unlocks it in-memory (password never stored)
+        ↓
+Layout-aware parser extracts every transaction row
+        ↓
+Auto-categorization: Salary / Food / Rent / Transport / ATM...
+        ↓
+SHA-256 deduplication — re-uploads are silently safe
+        ↓
+Firestore stores clean structured data, scoped to your account
+        ↓
+Filter · Search · Analyze · Export to Excel
 ```
 
-### ✅ What DevSync Does For You
-
-- 🔍 **Scans** `package.json`, `Dockerfile`, `docker-compose.yml`, `requirements.txt` automatically
-- ⚙️ **Detects** exact runtime versions (Node.js, Python, etc.) your project needs
-- 🩺 **Scores** your environment health and tells you exactly what's missing
-- 📋 **Generates** a complete setup report saved to your activity log
-- 🔀 **Compares** environments side-by-side to catch version conflicts before they happen
-- 🔗 **Connects** directly to your GitHub account for seamless repo access
+> **No third-party OCR. No external APIs. Entirely within your Firebase project.**
 
 ---
 
@@ -83,42 +85,56 @@ You paste a GitHub URL  →  DevSync scans the repo  →  You get a ready-to-run
 <tr>
 <td width="50%">
 
-### 🔍 Repository Analysis
-Deep-scans any GitHub repository URL. Detects your stack, maps dependencies, and identifies all configuration requirements automatically — no manual input needed.
+### 🔐 Password-Protected PDF Unlock
+pdfjs-dist decrypts bank PDFs entirely in-memory inside the Cloud Function. The password travels over TLS and is immediately discarded — never logged, never stored.
 
 </td>
 <td width="50%">
 
-### ⚙️ Environment Detection
-Identifies Node.js versions, MongoDB connections, Redis configs, Docker setups, and missing `.env` variables with precision. Knows what your app needs before you do.
-
-</td>
-</tr>
-<tr>
-<td width="50%">
-
-### 🩺 Health Monitoring
-Assigns a real-time health score (0–100) to your environment. Flags critical issues, warnings, and what's passing — so you know exactly where to focus.
-
-</td>
-<td width="50%">
-
-### 🔀 Environment Comparison
-Side-by-side diff of two environments. Highlights version conflicts, missing services, and incompatible variables so you can resolve issues before merging or deploying.
+### 🏦 Multi-Bank Parser Engine
+Dedicated layout-aware parsers for SBI, HDFC, ICICI, and Axis Bank. Auto-detects which bank from the PDF text — no manual selection needed.
 
 </td>
 </tr>
 <tr>
 <td width="50%">
 
-### 📋 Activity Logs
-Full history of every scan. Every report is stored, searchable, and detailed — perfect for auditing environment changes over time.
+### 🏷️ Auto-Categorization
+10 categories assigned automatically by keyword matching on the description: Salary, Food, Rent, Utility, Shopping, Transport, ATM, Investment, Health, Transfer.
 
 </td>
 <td width="50%">
 
-### 🔗 GitHub Integration
-OAuth-powered connection to your GitHub account. Browse, select, and analyze any repository you own or have access to, without copy-pasting URLs.
+### 🔑 SHA-256 Deduplication
+Each transaction's Firestore document ID is a SHA-256 hash of userId + date + description + amount. Re-uploading the same statement is completely safe — no duplicates.
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+### 🔍 Powerful Filter System
+Filter by date range, debit/credit type, category, amount range, and description search. All filters sync to URL — shareable and refresh-safe.
+
+</td>
+<td width="50%">
+
+### 📊 Analytics Dashboard
+Spend by category bar chart, monthly income vs expense line chart, top merchants, and auto-generated financial insights — all from real transaction data.
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+### 📤 Excel Export
+Download all currently filtered transactions as a formatted `.xlsx` file via SheetJS — includes a summary sheet with totals and active filter metadata.
+
+</td>
+<td width="50%">
+
+### 🌙 Dark / Light Mode
+System preference detected on first load. Toggle persisted in localStorage. Full dark-first design with `#080a12` background and DM Mono typography.
 
 </td>
 </tr>
@@ -128,301 +144,502 @@ OAuth-powered connection to your GitHub account. Browse, select, and analyze any
 
 ## 🏗 System Architecture
 
-The diagram below shows the complete high-level architecture of DevSync — from browser to GitHub API and back.
-
 ```
-┌──────────────────────────────────────────────────────────────────────┐
-│                        DevSync Platform                              │
-│                                                                      │
-│   ┌─────────────────────────┐         ┌──────────────────────────┐   │
-│   │    React Frontend        │◄──────►│   Node.js Backend        │   │
-│   │    (Vite + Tailwind)     │  REST   │   (Express.js)           │   │
-│   │                          │  API    │                          │   │
-│   │  ┌──────────────────┐   │         │  ┌────────────────────┐  │   │
-│   │  │  Pages           │   │         │  │  Analysis Engine   │  │   │
-│   │  │  • Dashboard     │   │         │  │  • Repo scanner    │  │   │
-│   │  │  • Sync          │   │         │  │  • Dep detector    │  │   │
-│   │  │  • Environments  │   │         │  │  • Score generator │  │   │
-│   │  │  • Compare       │   │         │  └────────────────────┘  │   │
-│   │  │  • Logs          │   │         │                          │   │
-│   │  │  • Settings      │   │         │  ┌────────────────────┐  │   │
-│   │  └──────────────────┘   │         │  │  Auth Layer        │  │   │
-│   │                          │         │  │  • JWT tokens      │  │   │
-│   │  ┌──────────────────┐   │         │  │  • GitHub OAuth    │  │   │
-│   │  │  Components      │   │         │  └────────────────────┘  │   │
-│   │  │  • Sidebar       │   │         │                          │   │
-│   │  │  • StatsCard     │   │         │  ┌────────────────────┐  │   │
-│   │  └──────────────────┘   │         │  │  Config Generator  │  │   │
-│   └─────────────────────────┘         │  │  • .env templates  │  │   │
-│                                        │  │  • Docker compose  │  │   │
-│                                        │  └────────────────────┘  │   │
-│                                        └──────────┬───────────────┘   │
-│                                                   │                   │
-│                             ┌─────────────────────┼─────────────┐     │
-│                             │                     │             │     │
-│                      ┌──────▼──────┐    ┌─────────▼──────┐     │     │
-│                       │  MongoDB   │    │  GitHub API    │     │     │
-│                       │  Storage   │    │  Repo Access   │     │     │
-│                       └────────────┘    └────────────────┘     │     │
-│                                                                 │     │
-│                      ┌─────────────────────────────────────┐   │     │
-│                      │  Redis (Planned) — Caching Layer    │   │     │
-│                      └─────────────────────────────────────┘         │
-└──────────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────────┐
+│                         CLIENT BROWSER                                   │
+│                                                                          │
+│   /login  /signup  /dashboard  /upload  /transactions                    │
+│   /statements  /analytics  /profile                                      │
+│                                                                          │
+│   ┌───────────────────────────────────────────────────────────────────┐  │
+│   │  React 18 + Vite + Tailwind v3 + react-router-dom v7             │  │
+│   │                                                                   │  │
+│   │  Pages              Components             Hooks                  │  │
+│   │  • Dashboard        • Navbar               • useAuth              │  │
+│   │  • Upload           • FilterBar            • useUpload            │  │
+│   │  • Transactions     • FilterChips          • useTransactions      │  │
+│   │  • Statements       • TransactionTable     • useFilterParams      │  │
+│   │  • Analytics        • TransactionModal     • useTheme             │  │
+│   │  • Profile          • ExportButton                                │  │
+│   │  • Login/Signup     • StatementSelector                           │  │
+│   └───────────────────────────────────────────────────────────────────┘  │
+└─────────────────────────┬────────────────────────────────────────────────┘
+                          │
+                Firebase SDK v10
+          httpsCallable · uploadBytesResumable
+          onAuthStateChanged · Firestore SDK
+                          │
+┌─────────────────────────▼────────────────────────────────────────────────┐
+│                   FIREBASE CLOUD FUNCTIONS  (Node 18)                    │
+│                                                                          │
+│   ┌─────────────────────┐    ┌──────────────────────────────────────┐   │
+│   │  processStatement() │    │  listTransactions()                  │   │
+│   │                     │    │                                      │   │
+│   │  ① Auth check        │    │  ① Auth check                        │   │
+│   │  ② Storage download  │    │  ② Firestore query                   │   │
+│   │  ③ unlockPdf()       │    │     userId + statementId + date      │   │
+│   │  ④ detectScanned()   │    │     type — server-side               │   │
+│   │  ⑤ detectBank()      │    │  ③ Amount / search / category        │   │
+│   │  ⑥ parser.parse()    │    │     — in-memory filter               │   │
+│   │  ⑦ normalize()       │    │  ④ Paginate → return                 │   │
+│   │  ⑧ categorize()      │    └──────────────────────────────────────┘   │
+│   │  ⑨ hash + batch write│                                               │
+│   └─────────────────────┘    ┌──────────────────────────────────────┐   │
+│                               │  listStatements()                    │   │
+│   Structured logging:         │  userId filter + uploadedAt sort     │   │
+│   uploadId · userId(masked)   └──────────────────────────────────────┘   │
+│   bank · txCount · errorType · durationMs                                │
+└──────────────┬───────────────────────────────┬───────────────────────────┘
+               │                               │
+    ┌──────────▼──────────┐         ┌──────────▼──────────┐
+    │   Firebase Storage  │         │   Cloud Firestore    │
+    │                     │         │                      │
+    │  statements/        │         │  /users/{uid}        │
+    │    {uid}/           │         │  /statements/{id}    │
+    │      {uploadId}.pdf │         │  /transactions/{hash}│
+    └─────────────────────┘         └──────────────────────┘
 ```
-
-### 🧱 Architecture Layers Explained
-
-| Layer | Technology | Responsibility |
-|:------|:-----------|:---------------|
-| **Frontend** | React 18 + Vite + Tailwind | UI, routing, user interactions |
-| **Backend API** | Node.js + Express.js | Business logic, repo analysis, config generation |
-| **Auth** | GitHub OAuth + JWT | Secure login and session management |
-| **Database** | MongoDB | User data, scan history, environment configs |
-| **Cache** | Redis *(planned)* | Speed up repeated repo scans |
-| **External API** | GitHub REST API | Fetch repository metadata and file contents |
 
 ---
 
 ## 🔄 Core Workflows
 
-### 1️⃣ Repository Analysis Flow
+### 1️⃣ Upload & Parse Flow
 
-> *What happens when you paste a GitHub URL into DevSync*
+> *What happens when a user uploads a bank PDF*
 
 ```mermaid
 flowchart TD
-    A([👤 Developer]) --> B[Paste GitHub Repo URL]
-    B --> C{Valid GitHub URL?}
-    C -- ❌ No --> D[Show URL Validation Error]
+    A([👤 User]) --> B[Drop PDF + Enter Password]
+    B --> C{Valid PDF?\nMax 20MB?}
+    C -- ❌ No --> D[Show Validation Error]
     D --> B
-    C -- ✅ Yes --> E[Fetch Repository Metadata via GitHub API]
-    E --> F[Parse File Tree Structure]
-    F --> G{Detect Config Files}
-    G --> G1[📦 package.json]
-    G --> G2[🐍 requirements.txt]
-    G --> G3[🐳 Dockerfile]
-    G --> G4[⚙️ docker-compose.yml]
-    G1 & G2 & G3 & G4 --> H[Extract Full Dependency List]
-    H --> I{Identify Required Services}
-    I --> I1[Node.js Version]
-    I --> I2[MongoDB Connection]
-    I --> I3[Redis Config]
-    I --> I4[Docker Settings]
-    I --> I5[.env Variables]
-    I1 & I2 & I3 & I4 & I5 --> J[Calculate Environment Health Score]
-    J --> K[Generate Detailed Environment Report]
-    K --> L[Save to Activity Logs]
-    L --> M([✅ Display Results on Dashboard])
+    C -- ✅ Yes --> E[uploadBytesResumable\nFirebase Storage]
+    E --> F[Progress Bar 0 → 100%]
+    F --> G[httpsCallable\nprocessStatement]
+    G --> H[bucket.file.download\nGet PDF Buffer]
+    H --> I[unlockPdf\npdfjs-dist decrypt]
+    I --> J{Password\nCorrect?}
+    J -- ❌ No --> J1[Throw WRONG_PASSWORD]
+    J -- ✅ Yes --> K[detectScanned\nCheck text density]
+    K --> L{All pages\nscanned?}
+    L -- ⚠️ Yes --> L1[Throw SCANNED_PDF]
+    L -- ✅ No --> M[extractAllRows\nY-coord grouping]
+    M --> N[detectBank\nKeyword match]
+    N --> O{Bank\nDetected?}
+    O -- ❌ No --> O1[Throw UNSUPPORTED_BANK]
+    O -- ✅ Yes --> P[parser.parse\nSBI / HDFC / ICICI / Axis]
+    P --> Q[normalize\nValidate + clean rows]
+    Q --> R[categorizeAll\n10 keyword categories]
+    R --> S[hashTransaction\nSHA-256 dedup ID]
+    S --> T[writeStatement\nCreate statement doc]
+    T --> U[writeTransactions\nBatch 500 / commit]
+    U --> V[✅ Success Toast\nbank + txCount]
 
     style A fill:#6366f1,color:#fff
-    style M fill:#22c55e,color:#fff
+    style V fill:#22c55e,color:#fff
+    style J1 fill:#ef4444,color:#fff
+    style L1 fill:#ef4444,color:#fff
+    style O1 fill:#ef4444,color:#fff
     style D fill:#ef4444,color:#fff
 ```
 
 ---
 
-### 2️⃣ Environment Health Check Flow
+### 2️⃣ Parser Pipeline — Internal Flow
 
-> *How DevSync scores your environment readiness (0–100)*
+> *How raw PDF bytes become clean structured transactions*
 
 ```mermaid
 flowchart LR
-    A([▶ Start Health Check]) --> B[Load Environment Config]
-    B --> C{Node.js\nVersion Match?}
+    A([PDF Buffer]) --> B[unlockPdf\npdfjs getDocument]
+    B --> C[detectScanned\nchars per page]
+    C --> D[extractFullText\nall pages concat]
+    D --> E{detectBank\nkeyword rules}
 
-    C -- ✅ Pass --> D{MongoDB\nReachable?}
-    C -- ❌ Fail --> C1[🚩 Flag: Version Mismatch\n−15 pts]
-    C1 --> D
+    E --> E1[SBI\nState Bank of India]
+    E --> E2[HDFC\nHDFC BANK]
+    E --> E3[ICICI\nICICI Bank]
+    E --> E4[AXIS\nAxis Bank]
 
-    D -- ✅ Pass --> E{Redis\nConfigured?}
-    D -- ❌ Fail --> D1[🚩 Flag: DB Unavailable\n−20 pts]
-    D1 --> E
+    E1 & E2 & E3 & E4 --> F[extractAllRows\ngetTextContent per page]
+    F --> G[groupItemsIntoRows\nY-coord ±3px tolerance\nSort by X]
+    G --> H[parser.parse\nFind header row\nSkip summary rows\nParse amounts]
+    H --> I[normalizeTransactions\nValidate date YYYY-MM-DD\nClamp negatives\nFilter zero amounts]
+    I --> J[categorizeAll\nkeyword → category]
+    J --> K[hashTransaction\nSHA-256 16-char ID]
+    K --> L([Clean Transaction Array])
 
-    E -- ✅ Pass --> F{Env Variables\nPresent?}
-    E -- ⚠️ Optional --> E1[⚠ Warn: Optional Service\n−5 pts]
-    E1 --> F
-
-    F -- ✅ Pass --> G{Docker\nConfig Valid?}
-    F -- ❌ Fail --> F1[🚩 Flag: Missing .env\n−25 pts]
-    F1 --> G
-
-    G --> H[Compute Final Score]
-    H --> I{Score Range?}
-
-    I -- 90–100 --> J[🟢 Ready to Code]
-    I -- 70–89  --> K[🟡 Warnings Present]
-    I -- 0–69   --> L[🔴 Critical Issues Found]
-
-    style J fill:#22c55e,color:#fff
-    style K fill:#f59e0b,color:#fff
-    style L fill:#ef4444,color:#fff
-```
-
----
-
-### 3️⃣ GitHub OAuth Authentication Flow
-
-> *How DevSync securely logs you in with your GitHub account*
-
-```mermaid
-sequenceDiagram
-    actor User
-    participant UI as ⚛️ React Frontend
-    participant API as 🖥 Express Backend
-    participant DB as 🗄 MongoDB
-    participant GH as 🐙 GitHub OAuth
-
-    User->>UI: Click "Login with GitHub"
-    UI->>GH: Redirect to GitHub OAuth endpoint
-    GH-->>User: Show GitHub consent screen
-    User->>GH: Approve DevSync access
-    GH-->>UI: Return authorization code
-    UI->>API: POST /auth/github { code }
-    API->>GH: Exchange code → access_token
-    GH-->>API: Return access_token + scopes
-    API->>DB: Upsert user record
-    DB-->>API: Return user object
-    API-->>UI: Return JWT + user profile
-    UI->>UI: Store JWT in memory (secure)
-    UI-->>User: ✅ Redirect to Dashboard
-```
-
----
-
-### 4️⃣ Environment Comparison Flow
-
-> *How DevSync diffs two environments to catch conflicts*
-
-```mermaid
-flowchart TD
-    A[🅰 Select Environment A] --> C[Load Both Configs]
-    B[🅱 Select Environment B] --> C
-    C --> D[Parse & Normalize Configs]
-
-    D --> E{Compare\nNode Versions}
-    D --> F{Compare\nDependencies}
-    D --> G{Compare\nServices}
-    D --> H{Compare\nEnv Variables}
-
-    E & F & G & H --> I[Generate Diff Report]
-
-    I --> J{Conflicts\nDetected?}
-    J -- Yes --> K[🔴 Highlight Conflicts\nin Red]
-    J -- No  --> L[🟢 Mark as Compatible]
-
-    K & L --> M[Display Side-by-Side View]
-    M --> N[📄 Export Comparison Report]
-
-    style K fill:#ef4444,color:#fff
+    style A fill:#3b82f6,color:#fff
     style L fill:#22c55e,color:#fff
 ```
 
 ---
 
-### 5️⃣ Data Flow — End to End
+### 3️⃣ Firebase Auth Flow
 
-> *The complete journey of a scan request through the DevSync system*
+> *How secure login and route protection works*
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant UI as ⚛️ React Frontend
+    participant Auth as 🔐 Firebase Auth
+    participant DB as 🗄 Firestore
+    participant Route as 🛡 ProtectedRoute
+
+    User->>UI: Visit /dashboard
+    UI->>Route: Check auth state
+    Route->>Auth: onAuthStateChanged()
+    Auth-->>Route: user = null (not logged in)
+    Route-->>UI: Navigate to /login
+
+    User->>UI: Enter email + password
+    UI->>Auth: signInWithEmailAndPassword()
+    Auth-->>UI: UserCredential + JWT
+    UI->>UI: Store user in state
+    UI-->>User: Redirect to /dashboard
+
+    Note over UI,DB: On Signup only
+    UI->>DB: setDoc /users/{uid}
+    DB-->>UI: User doc created
+
+    User->>UI: Visit any protected route
+    UI->>Route: Check useAuth()
+    Route->>Auth: onAuthStateChanged()
+    Auth-->>Route: user = UserObject
+    Route-->>UI: Render children ✅
+```
+
+---
+
+### 4️⃣ Filter & Query Flow
+
+> *How the transaction filter system works end-to-end*
+
+```mermaid
+flowchart TD
+    A[User Sets Filters\ndate · type · category\nsearch · amount · statement] --> B[useFilterParams\nSync to URL params]
+    B --> C[useTransactions\nBuild params object]
+    C --> D[httpsCallable\nlistTransactions]
+    D --> E{Firestore\nServer-side}
+    E --> E1[.where userId == uid]
+    E --> E2[.where statementId]
+    E --> E3[.where date >= from]
+    E --> E4[.where date <= to]
+    E --> E5[.where type == debit/credit]
+    E --> E6[.orderBy date desc]
+    E1 & E2 & E3 & E4 & E5 & E6 --> F{In-memory\nFilters}
+    F --> F1[amount min/max]
+    F --> F2[description search]
+    F --> F3[category match]
+    F1 & F2 & F3 --> G[Paginate\nslice offset to offset+size]
+    G --> H[Return\ndata · total · page · totalPages]
+    H --> I[TransactionTable\nRender rows + skeleton]
+    H --> J[FilterChips\nShow active filters]
+    H --> K[ExportButton\nfetch all 1000 → xlsx]
+
+    style A fill:#6366f1,color:#fff
+```
+
+---
+
+### 5️⃣ End-to-End Data Flow
+
+> *Complete journey of data through the BankDigitizer system*
 
 ```mermaid
 flowchart LR
-    subgraph Client ["⚛️ React Frontend"]
-        U[User Input\nGitHub URL] --> R[API Request\nwith JWT]
+    subgraph Browser ["⚛️ React Frontend"]
+        U[User\nPDF + Password] --> UP[Upload Hook\nuseUpload]
+        UP --> FE[Filter Hook\nuseFilterParams]
     end
 
-    subgraph Server ["🖥 Express Backend"]
-        R --> AU[Auth Middleware\nVerify JWT]
-        AU --> AE[Analysis Engine]
-        AE --> CG[Config Generator]
+    subgraph Functions ["☁️ Cloud Functions"]
+        UP --> PS[processStatement\nAuth → Decrypt → Parse]
+        FE --> LT[listTransactions\nQuery → Filter → Paginate]
     end
 
-    subgraph External ["🌐 External Services"]
-        AE <--> GHA[GitHub API\nFetch repo files]
+    subgraph Storage ["🗄 Firebase Storage"]
+        PS <--> ST[statements/\nuserid/uploadId.pdf]
     end
 
-    subgraph Storage ["💾 Data Layer"]
-        CG --> MDB[(MongoDB\nSave report)]
-        AE <--> RD[(Redis\nCache scan)]
+    subgraph Firestore ["🔥 Firestore"]
+        PS --> WS[(statements\ncollection)]
+        PS --> WT[(transactions\ncollection)]
+        LT <--> WT
+        LT <--> WS
     end
 
-    MDB --> RS[Return\nReport + Score]
-    RS --> UI[Update\nDashboard UI]
+    subgraph UI ["📊 Dashboard"]
+        LT --> TT[TransactionTable]
+        LT --> AN[Analytics Charts]
+        LT --> EX[Excel Export]
+    end
 ```
+
+---
+
+## 📐 Unified Transaction Schema
+
+Every bank's raw rows get normalized to this single shape:
+
+```json
+{
+  "transactionId": "a1b2c3d4e5f6a7b8",
+  "statementId":   "firestore-auto-id",
+  "userId":        "firebase-auth-uid",
+  "date":          "2024-01-15",
+  "description":   "UPI-ZOMATO-Food delivery",
+  "debit":         450.00,
+  "credit":        0,
+  "balance":       38050.00,
+  "type":          "debit",
+  "category":      "Food",
+  "createdAt":     "Firestore Timestamp"
+}
+```
+
+### Date Normalization Table
+
+| Bank | Source Format | Example | Normalized |
+|------|:-------------|---------|-----------|
+| SBI | DD/MM/YYYY | 15/01/2024 | 2024-01-15 |
+| HDFC | DD-MMM-YYYY | 15-Jan-2024 | 2024-01-15 |
+| HDFC | DD/MM/YY | 15/01/24 | 2024-01-15 |
+| ICICI | DD-MMM-YYYY | 15-Jan-2024 | 2024-01-15 |
+| Axis | DD-MM-YYYY | 15-01-2024 | 2024-01-15 |
+
+---
+
+## 🗄 Firestore Data Model
+
+```
+firestore-root/
+│
+├── users/{uid}
+│     ├── uid          : string
+│     ├── email        : string
+│     └── createdAt    : timestamp
+│
+├── statements/{statementId}
+│     ├── statementId      : string  (= doc ID)
+│     ├── userId           : string
+│     ├── bankName         : SBI | HDFC | ICICI | AXIS
+│     ├── fileName         : string
+│     ├── storagePath      : string
+│     ├── transactionCount : number
+│     ├── uploadedAt       : timestamp
+│     └── status           : pending | processing | done
+│
+└── transactions/{hash}   ← SHA-256(userId+date+description+amount)
+      ├── transactionId : string   (= doc ID)
+      ├── statementId   : string
+      ├── userId        : string
+      ├── date          : string   (YYYY-MM-DD)
+      ├── description   : string
+      ├── debit         : number
+      ├── credit        : number
+      ├── balance       : number
+      ├── type          : debit | credit
+      ├── category      : Salary|Food|Rent|Utility|Shopping|
+      │                   Transport|ATM|Investment|Health|Transfer|Other
+      └── createdAt     : timestamp
+```
+
+### Composite Indexes
+
+```
+transactions: userId ASC  + date DESC
+transactions: userId ASC  + type ASC      + date DESC
+transactions: userId ASC  + statementId ASC + date DESC
+statements:   userId ASC  + uploadedAt DESC
+```
+
+---
+
+## 🔒 Security Model
+
+### Firestore Rules
+
+```
+✅ /users/{uid}          → read/write only if auth.uid == uid
+✅ /statements/{id}      → read/write only if .userId == auth.uid
+✅ /transactions/{hash}  → read/write only if .userId == auth.uid
+❌ Cross-user access      → denied at rule level, not app level
+❌ Unauthenticated        → denied
+```
+
+### Storage Rules
+
+```
+✅ statements/{uid}/**   → read/write only if auth.uid == uid
+❌ Other user paths       → denied
+```
+
+### Password Handling
+
+```
+Browser ──(HTTPS/TLS)──▶ Cloud Function RAM ──▶ pdfjs-dist ──▶ discarded
+
+❌ Never written to Cloud Logging
+❌ Never stored in Firestore
+❌ Never saved to Firebase Storage
+❌ Never in function response body
+```
+
+---
+
+## ⚙️ Tech Stack
+
+### 🎨 Frontend
+
+| Technology | Version | Purpose |
+|:-----------|:--------|:--------|
+| **React.js** | 18.x | Component-based UI with hooks |
+| **Vite** | 5.x | Fast HMR dev server + bundler |
+| **Tailwind CSS** | 3.x | Utility-first dark-first styling |
+| **react-router-dom** | v7 | SPA routing + ProtectedRoute |
+| **lucide-react** | 0.383 | Tree-shakeable SVG icon set |
+| **xlsx (SheetJS)** | — | Client-side .xlsx generation |
+| **recharts** | — | Bar + line charts for Analytics |
+
+### ⚙️ Backend
+
+| Technology | Version | Purpose |
+|:-----------|:--------|:--------|
+| **Firebase Cloud Functions** | v2 | Serverless Node 18 backend |
+| **Cloud Firestore** | — | Per-user document database |
+| **Firebase Storage** | — | GCS-backed PDF file storage |
+| **Firebase Auth** | — | Email/password authentication |
+| **pdfjs-dist (legacy)** | 3.11 | In-memory PDF decrypt + extract |
+| **crypto (built-in)** | — | SHA-256 deduplication hashing |
+
+### 🧪 Testing
+
+| Technology | Purpose |
+|:-----------|:--------|
+| **Vitest** | Unit tests for all 4 bank parsers |
+| **Fixture files** | Row dump fixtures per bank format |
+| **CLI test scripts** | testPdf · testParser · testUnlock |
 
 ---
 
 ## 📁 Project Structure
 
 ```
-devsync-frontend/
+bank-statement-digitizer/
 │
-├── 📂 public/
-│   └── favicon.ico
+├── 📂 Admin/                            # React 18 frontend
+│   └── 📂 src/
+│       │
+│       ├── 📂 pages/
+│       │   ├── Login.jsx               # Email/password auth form
+│       │   ├── Signup.jsx              # Account creation + Firestore user doc
+│       │   ├── Dashboard.jsx           # Summary stats + recent 6 transactions
+│       │   ├── Upload.jsx              # Drag-drop + password + progress bar
+│       │   ├── Transactions.jsx        # Table + all filters + export button
+│       │   ├── Statements.jsx          # All statements + bank badge + View btn
+│       │   ├── Analytics.jsx           # Category bar + monthly line + insights
+│       │   └── Profile.jsx             # Email · joined date · change password
+│       │
+│       ├── 📂 components/
+│       │   ├── Navbar.jsx              # DM Mono design · clock · dark/light
+│       │   ├── ProtectedRoute.jsx      # Auth guard → redirect /login
+│       │   ├── FilterBar.jsx           # Date/amount/type/category/search
+│       │   ├── FilterChips.jsx         # Active filter pills with X dismiss
+│       │   ├── TransactionTable.jsx    # Sticky header · skeleton · pagination
+│       │   ├── TransactionModal.jsx    # Row click → detail modal + copy btn
+│       │   ├── StatementSelector.jsx   # Dropdown filter by statement
+│       │   ├── ExportButton.jsx        # Fetch all filtered → .xlsx download
+│       │   ├── Toast.jsx               # Success / error / info notifications
+│       │   └── ProgressBar.jsx         # Upload → Process → Done stepper
+│       │
+│       ├── 📂 hooks/
+│       │   ├── useAuth.js              # onAuthStateChanged wrapper
+│       │   ├── useUpload.js            # Storage upload + function call
+│       │   ├── useTransactions.js      # listTransactions + validation
+│       │   ├── useFilterParams.js      # URL ↔ filter state sync
+│       │   └── useTheme.js             # Dark/light toggle + localStorage
+│       │
+│       ├── 📂 routes/
+│       │   └── AppRoutes.jsx           # All routes with ProtectedRoute
+│       │
+│       └── firebase.js                 # SDK init: auth · db · storage · fns
 │
-├── 📂 src/
+├── 📂 functions/                        # Firebase Cloud Functions
 │   │
-│   ├── 📂 routes/
-│   │   └── AppRoutes.jsx          # Central route config (React Router)
+│   ├── 📂 parsers/
+│   │   ├── index.js                    # parseStatement() dispatcher
+│   │   ├── sbi.js                      # DD/MM/YYYY · Dr/Cr suffix
+│   │   ├── hdfc.js                     # DD-MMM-YYYY · 7-col layout
+│   │   ├── icici.js                    # S.No detection · DD-MMM-YYYY
+│   │   └── axis.js                     # DD-MM-YYYY · Tran Date col
 │   │
-│   ├── 📂 layouts/
-│   │   └── MainLayout.jsx         # Shared shell with Sidebar + Outlet
+│   ├── 📂 utils/
+│   │   ├── unlockPdf.js                # pdfjs decrypt + typed errors
+│   │   ├── extractRows.js              # Y-coord grouping + raw dump
+│   │   ├── detectBank.js               # Keyword rules → bank name
+│   │   ├── detectScanned.js            # Text density per page check
+│   │   ├── normalizeTransactions.js    # Validate + clean parser output
+│   │   ├── categorize.js               # 10-category keyword matcher
+│   │   ├── hashTransaction.js          # SHA-256 dedup ID generator
+│   │   └── logger.js                   # Structured JSON Cloud Logging
 │   │
-│   ├── 📂 components/
-│   │   ├── Sidebar.jsx            # Navigation sidebar with active states
-│   │   └── StatsCard.jsx          # Reusable metric/KPI card component
+│   ├── 📂 firestore/
+│   │   ├── writeStatement.js           # Create statement doc → return ID
+│   │   ├── writeTransactions.js        # Batch write 500/commit
+│   │   ├── listTransactions.js         # Query + in-mem filters + paginate
+│   │   └── listStatements.js           # userId filter + date sort
 │   │
-│   ├── 📂 pages/
-│   │   ├── Login.jsx              # GitHub OAuth sign-in landing page
-│   │   ├── Dashboard.jsx          # Overview: health scores & recent scans
-│   │   ├── Sync.jsx               # GitHub URL input & repo analysis trigger
-│   │   ├── Environments.jsx       # View all detected environment configs
-│   │   ├── Compare.jsx            # Side-by-side environment diff tool
-│   │   ├── Logs.jsx               # Full scan history & detailed reports
-│   │   └── Settings.jsx           # GitHub integration & user preferences
+│   ├── 📂 tests/
+│   │   ├── 📂 fixtures/                # PDF row dump fixtures
+│   │   │   ├── sbi.fixture.js
+│   │   │   ├── hdfc.fixture.js
+│   │   │   ├── icici.fixture.js
+│   │   │   └── axis.fixture.js
+│   │   ├── sbi.test.js                 # 11 unit tests
+│   │   ├── hdfc.test.js                # 7 unit tests
+│   │   ├── icici.test.js               # 8 unit tests
+│   │   ├── axis.test.js                # 7 unit tests
+│   │   └── parseStatement.smoke.test.js
 │   │
-│   ├── 📂 hooks/                  # Custom React hooks (planned)
-│   ├── 📂 utils/                  # Utility/helper functions (planned)
-│   │
-│   ├── App.jsx                    # Root component & provider setup
-│   ├── main.jsx                   # ReactDOM entry point
-│   └── index.css                  # Global Tailwind styles
+│   ├── index.js                        # Exports all callables
+│   ├── testPdf.js                      # CLI: raw text per page
+│   ├── testParser.js                   # CLI: full parse preview
+│   ├── testUnlock.js                   # CLI: error path testing
+│   └── vitest.config.js
 │
-├── index.html                     # HTML entry point
-├── vite.config.js                 # Vite bundler configuration
-├── tailwind.config.js             # Tailwind theme configuration
-└── package.json                   # Dependencies & npm scripts
+├── 📂 docs/
+│   ├── schema.md
+│   ├── firestore-schema.md
+│   └── samples.md
+│
+├── 📂 samples/                          # Test PDFs — NOT committed
+│   └── .gitignore                       # *.pdf
+│
+├── firestore.rules
+├── firestore.indexes.json
+├── storage.rules
+├── firebase.json
+├── .firebaserc
+├── .prettierrc
+├── .eslintrc.js
+└── README.md
 ```
 
 ---
 
-## 🛠 Tech Stack
+## 🧪 Error Codes
 
-### 🎨 Frontend *(Current)*
-
-| Technology | Version | Purpose |
-|:-----------|:--------|:--------|
-| ![React](https://img.shields.io/badge/-React-61DAFB?logo=react&logoColor=black&style=flat-square) **React.js** | 18.x | Component-based UI architecture |
-| ![Vite](https://img.shields.io/badge/-Vite-646CFF?logo=vite&logoColor=white&style=flat-square) **Vite** | 5.x | Lightning-fast dev server & bundler |
-| ![Tailwind](https://img.shields.io/badge/-Tailwind-38BDF8?logo=tailwindcss&logoColor=white&style=flat-square) **Tailwind CSS** | 3.x | Utility-first responsive styling |
-| **React Router DOM** | 6.x | Client-side SPA routing |
-| **Lucide React** | Latest | Consistent icon library |
-
-### ⚙️ Backend *(Planned)*
-
-| Technology | Purpose |
-|:-----------|:--------|
-| ![Node.js](https://img.shields.io/badge/-Node.js-339933?logo=node.js&logoColor=white&style=flat-square) **Node.js + Express** | REST API server & middleware |
-| ![MongoDB](https://img.shields.io/badge/-MongoDB-47A248?logo=mongodb&logoColor=white&style=flat-square) **MongoDB** | User data & scan history storage |
-| ![JWT](https://img.shields.io/badge/-JWT-000000?logo=jsonwebtokens&logoColor=white&style=flat-square) **JWT** | Stateless session authentication |
-| **GitHub REST API** | Repository metadata & file access |
-
-### 🚀 Infrastructure *(Future)*
-
-| Technology | Purpose |
-|:-----------|:--------|
-| ![Redis](https://img.shields.io/badge/-Redis-DC382D?logo=redis&logoColor=white&style=flat-square) **Redis** | Caching repeated scan results |
-| ![Docker](https://img.shields.io/badge/-Docker-2496ED?logo=docker&logoColor=white&style=flat-square) **Docker** | Containerized deployment |
-| **AI / LLM** | Smart environment fix recommendations |
+| Code | Triggered By | User-Facing Message |
+|:-----|:------------|:--------------------|
+| `WRONG_PASSWORD` | pdfjs PasswordException | "Incorrect password. Please check and try again." |
+| `CORRUPT_PDF` | pdfjs InvalidPDFException | "This file is not a valid PDF or is corrupted." |
+| `EMPTY_PDF` | pdf.numPages === 0 | "PDF opened but contains no pages." |
+| `UNSUPPORTED_BANK` | detectBank → UNKNOWN | "Supported: SBI, HDFC, ICICI, Axis Bank." |
+| `SCANNED_PDF` | All pages image-only | "Scanned PDFs not supported in v1 — use net banking PDF." |
+| `STORAGE_DOWNLOAD` | bucket.download() fails | "Could not find the uploaded PDF in storage." |
 
 ---
 
@@ -430,128 +647,150 @@ devsync-frontend/
 
 ### Prerequisites
 
-Make sure you have the following installed:
-
-- ✅ **Node.js** `>= 18.x` — [Download](https://nodejs.org/)
-- ✅ **npm** `>= 9.x` — comes with Node.js
-- ✅ **Git** — [Download](https://git-scm.com/)
+```bash
+node --version     # must be 18+
+npm --version      # must be 9+
+npm install -g firebase-tools
+firebase --version
+```
 
 ### Installation
 
-**Step 1 — Clone the repository**
+**Step 1 — Clone**
 
 ```bash
-git clone https://github.com/Riyaban583/Auto-Environment-Sync-Platform.git
-cd devsync-frontend
+git clone https://github.com/Akshatsrii/bank-statement-digitizer.git
+cd bank-statement-digitizer
 ```
 
 **Step 2 — Install dependencies**
 
 ```bash
-npm install
+cd functions && npm install && cd ..
+cd Admin    && npm install && cd ..
 ```
 
-**Step 3 — Configure environment**
+**Step 3 — Firebase config**
+
+Open `Admin/src/firebase.js` and paste your config from:
+**Firebase Console → Project Settings → Your Apps → Web App**
+
+```js
+const firebaseConfig = {
+  apiKey:            "AIza...",
+  authDomain:        "your-project.firebaseapp.com",
+  projectId:         "your-project-id",
+  storageBucket:     "your-project.appspot.com",
+  messagingSenderId: "123456789",
+  appId:             "1:123...:web:abc...",
+};
+```
+
+Enable email/password auth:
+**Firebase Console → Authentication → Sign-in method → Email/Password → Enable**
+
+**Step 4 — Deploy Firestore rules + indexes**
 
 ```bash
-cp .env.example .env
+firebase login
+firebase use --add
+firebase deploy --only firestore
+firebase deploy --only firestore:indexes
+firebase deploy --only storage
 ```
 
-Then open `.env` and fill in your GitHub OAuth credentials:
-
-```env
-VITE_GITHUB_CLIENT_ID=your_github_client_id
-VITE_GITHUB_REDIRECT_URI=http://localhost:5173/auth/callback
-```
-
-**Step 4 — Start the development server**
+**Step 5 — Run locally**
 
 ```bash
-npm run dev
+# Terminal 1
+firebase emulators:start
+# → Emulator UI: http://localhost:4000
+
+# Terminal 2
+cd Admin && npm run dev
+# → App: http://localhost:5173
 ```
 
-Open [http://localhost:5173](http://localhost:5173) in your browser. 🎉
-
-### Build for Production
+**Step 6 — Deploy backend**
 
 ```bash
-npm run build      # Build optimized bundle
-npm run preview    # Preview production build locally
+firebase deploy --only functions
 ```
 
 ---
 
-## 🖥 Application Screens
+## 🧪 Testing
 
-| Screen | Route | Description |
-|:-------|:------|:------------|
-| 🔐 **Login** | `/` | GitHub OAuth sign-in with clean landing UI |
-| 📊 **Dashboard** | `/dashboard` | Overview of recent scans, health scores, and activity stats |
-| 🔄 **Repository Sync** | `/sync` | Paste any GitHub URL to trigger instant environment analysis |
-| ⚙️ **Environments** | `/environments` | Browse all detected environment configurations |
-| 🔀 **Environment Comparison** | `/compare` | Side-by-side diff of two environments |
-| 📋 **Activity Logs** | `/logs` | Complete history of all repository scans and reports |
-| 🛠 **Settings** | `/settings` | Manage GitHub integration and notification preferences |
+### Unit tests
 
----
+```bash
+cd functions
+npm test
+# Runs 33 unit tests: sbi · hdfc · icici · axis parsers
+```
 
-## 👥 Contributors
+### With coverage
 
-This project was built with passion by:
+```bash
+npm test -- --coverage
+```
 
-<table>
-<tr>
+### Smoke tests against real PDFs
 
-<td align="center" width="50%">
-<br/>
+```bash
+SBI_PASSWORD=pass HDFC_PASSWORD=pass ICICI_PASSWORD=pass npm test
+```
 
-### 👨‍💻 Akshat Srivastava
+### CLI debug tools
 
-[![GitHub](https://img.shields.io/badge/GitHub-@AkshatSrivastava-181717?style=for-the-badge&logo=github)](https://github.com/AkshatSrivastava)
+```bash
+cd functions
 
-**Role:** Full-Stack Developer & System Architect
+# Print raw PDF text per page
+node testPdf.js ../samples/SBI.pdf
 
-**Contributions:**
-- 🏗 Designed the overall system architecture and data flow
-- ⚙️ Built the Repository Analysis Engine logic
-- 🔗 Implemented GitHub API integration layer
-- 🩺 Developed the Environment Health Scoring algorithm
-- 🔐 Architected the JWT + OAuth authentication flow
-- 📊 Built the Environment Comparison (diff) module
-- 🗄 Designed MongoDB schema for users and scan history
+# Full parse with table preview
+node testParser.js ../samples/SBI.pdf YOUR_PASSWORD
 
-</td>
+# Inspect raw PDF item layout (debug new bank)
+node testParser.js ../samples/HDFC.pdf YOUR_PASSWORD --inspect
 
-<td align="center" width="50%">
-<br/>
-
-### 👩‍💻 Riya Bansal
-
-[![GitHub](https://img.shields.io/badge/GitHub-@Riyaban583-181717?style=for-the-badge&logo=github)](https://github.com/Riyaban583)
-
-**Role:** Frontend Developer & UI/UX Lead
-
-**Contributions:**
-- 🎨 Designed and built the complete React frontend
-- 🧭 Set up React Router DOM routing & layout system
-- 🖥 Developed all 7 application screens (Dashboard, Sync, Compare, Logs, etc.)
-- 📦 Created reusable component library (Sidebar, StatsCard)
-- 💅 Implemented Tailwind CSS design system & responsive layouts
-- 🔄 Integrated frontend with REST API endpoints
-- 📋 Built the Activity Logs UI and scan history views
-
-</td>
-
-</tr>
-</table>
-
-<div align="center">
+# Test error handling paths
+node testUnlock.js ../samples/SBI.pdf YOUR_PASSWORD
+```
 
 ---
 
-*Built together as part of a hackathon project. Questions? Open an [issue](https://github.com/Riyaban583/Auto-Environment-Sync-Platform/issues) or start a [discussion](https://github.com/Riyaban583/Auto-Environment-Sync-Platform/discussions).*
+## 📅 Build Timeline
 
-</div>
+```
+╔═════════════════════════════════════════╗  ╔═════════════════════════════════════════╗
+║  Phase 1 — Foundation  ✅ DONE          ║  ║  Phase 2 — Core Pipeline  ✅ DONE       ║
+╠═════════════════════════════════════════╣  ╠═════════════════════════════════════════╣
+║  ✅ Repo + Firebase init                 ║  ║  ✅ unlockPdf + typed errors             ║
+║  ✅ React/Vite/Tailwind scaffold          ║  ║  ✅ extractRows Y-coord grouping         ║
+║  ✅ Firestore schema + rules             ║  ║  ✅ detectBank keyword fingerprint        ║
+║  ✅ pdfjs-dist prototype                 ║  ║  ✅ detectScanned page density check      ║
+╚═════════════════════════════════════════╝  ╚═════════════════════════════════════════╝
+
+╔═════════════════════════════════════════╗  ╔═════════════════════════════════════════╗
+║  Phase 3 — Parsers  ✅ DONE             ║  ║  Phase 4 — Firestore  ✅ DONE           ║
+╠═════════════════════════════════════════╣  ╠═════════════════════════════════════════╣
+║  ✅ SBI parser (DD/MM/YYYY)              ║  ║  ✅ writeStatement doc                   ║
+║  ✅ HDFC parser (DD-MMM-YYYY)            ║  ║  ✅ writeTransactions 500-batch          ║
+║  ✅ ICICI parser (S.No detection)        ║  ║  ✅ SHA-256 deduplication                ║
+║  ✅ Axis parser (DD-MM-YYYY)             ║  ║  ✅ listTransactions + filters           ║
+╚═════════════════════════════════════════╝  ╚═════════════════════════════════════════╝
+
+╔═════════════════════════════════════════╗  ╔═════════════════════════════════════════╗
+║  Phase 5 — UI  ✅ DONE                  ║  ║  Phase 6 — Auth + Polish  ✅ DONE       ║
+╠═════════════════════════════════════════╣  ╠═════════════════════════════════════════╣
+║  ✅ Upload page drag-drop + progress     ║  ║  ✅ Firebase Auth email/password         ║
+║  ✅ Transactions table + skeleton        ║  ║  ✅ Login · Signup · ProtectedRoute      ║
+║  ✅ Filters + URL sync + chips           ║  ║  ✅ Dashboard · Analytics · Profile      ║
+║  ✅ Excel export + summary sheet         ║  ║  ✅ Dark/light mode · Transaction modal  ║
+╚═════════════════════════════════════════╝  ╚═════════════════════════════════════════╝
+```
 
 ---
 
@@ -559,54 +798,53 @@ This project was built with passion by:
 
 ```
 ╔══════════════════════════════════════╗   ╔══════════════════════════════════════╗
-║   Phase 1 — Foundation ✅ DONE       ║   ║   Phase 2 — Backend Integration 🔧   ║
+║   v1.0.0 — MVP  ✅ RELEASED          ║   ║   v2.0.0 — Intelligence  🔲           ║
 ╠══════════════════════════════════════╣   ╠══════════════════════════════════════╣
-║  ✅ React frontend scaffold           ║   ║  🔲 Node.js + Express REST API        ║
-║  ✅ Routing & layout system           ║   ║  🔲 MongoDB integration & schemas     ║
-║  ✅ Dashboard UI                      ║   ║  🔲 GitHub OAuth flow                 ║
-║  ✅ Sync, Compare, Logs, Settings     ║   ║  🔲 Repository analysis engine        ║
-║  ✅ Stats cards & sidebar nav         ║   ║  🔲 JWT authentication middleware     ║
+║  ✅ 4-bank PDF parser engine          ║   ║  🔲 OCR support (Tesseract.js)        ║
+║  ✅ Firebase Auth + Firestore         ║   ║  🔲 AI categorization (Gemini API)    ║
+║  ✅ Analytics dashboard               ║   ║  🔲 Budget goals + alerts             ║
+║  ✅ Excel export                      ║   ║  🔲 Google OAuth sign-in              ║
+║  ✅ 33 unit tests                     ║   ║  🔲 Bank of Baroda + Kotak parsers    ║
 ╚══════════════════════════════════════╝   ╚══════════════════════════════════════╝
 
 ╔══════════════════════════════════════╗   ╔══════════════════════════════════════╗
-║   Phase 3 — Intelligence 🤖          ║   ║   Phase 4 — Scale & Collaboration 🌍 ║
+║   v3.0.0 — Scale  🔲                 ║   ║   v4.0.0 — Mobile  🔲                ║
 ╠══════════════════════════════════════╣   ╠══════════════════════════════════════╣
-║  🔲 Redis caching layer               ║   ║  🔲 Team collaboration features       ║
-║  🔲 Docker Compose auto-generation    ║   ║  🔲 Cloud deployment support          ║
-║  🔲 AI-powered fix recommendations    ║   ║  🔲 Real-time environment monitoring  ║
-║  🔲 Auto .env variable detection      ║   ║  🔲 Webhook integrations              ║
-║  🔲 Repository auto-scan on push      ║   ║  🔲 VS Code extension                 ║
+║  🔲 Multi-account support             ║   ║  🔲 React Native app                  ║
+║  🔲 Webhook: auto-scan on email       ║   ║  🔲 Camera PDF scan                   ║
+║  🔲 Google Sheets export              ║   ║  🔲 VS Code extension                 ║
 ╚══════════════════════════════════════╝   ╚══════════════════════════════════════╝
 ```
 
 ---
 
-## 🤝 Contributing
+## ⚠️ Known Limitations
 
-Contributions are welcome! Here's how to get involved:
-
-1. **Fork** the repository
-2. **Create** a feature branch: `git checkout -b feat/your-feature-name`
-3. **Commit** your changes: `git commit -m "feat: add your feature"`
-4. **Push** to your branch: `git push origin feat/your-feature-name`
-5. **Open** a Pull Request 🎉
-
-Please follow [Conventional Commits](https://www.conventionalcommits.org/) for commit messages.
-
----
-
-## 📄 License
-
-This project was developed for **educational, academic, and hackathon** purposes.
+| Issue | Workaround / Status |
+|:------|:-------------------|
+| Scanned PDFs (image-only) | Warns user — OCR planned for v2 |
+| HDFC credit card statements | Only savings account format supported in v1 |
+| Axis NRI statement format | Non-standard column layout — v2 |
+| Statements with 1000+ rows | First parse is slow — batch writes optimize storage |
+| Multi-page statements with unusual fonts | Use `--inspect` flag in testParser.js to debug |
 
 ---
 
 <div align="center">
 
-Made with ❤️ by **Akshat Srivastava** & **Riya Bansal**
+Built in a 10-day sprint &nbsp;·&nbsp; Firebase + React + pdfjs-dist
 
-⭐ **Star this repo if DevSync saved you from environment hell!** ⭐
+**[Akshat Srivastava](https://github.com/Akshatsrii)**
 
-*Stop configuring. Start coding.*
+[![GitHub](https://img.shields.io/badge/GitHub-Akshatsrii-181717?style=flat-square&logo=github)](https://github.com/Akshatsrii)
+[![Portfolio](https://img.shields.io/badge/Portfolio-protfolio--531z.vercel.app-000?style=flat-square&logo=vercel)](https://protfolio-531z.vercel.app)
+
+<img src="https://img.shields.io/badge/Made_with-❤️_in_India-FF9933?style=flat-square"/>
+&nbsp;
+<img src="https://img.shields.io/badge/v1.0.0-Released-22C55E?style=flat-square"/>
+
+⭐ **Star this repo if BankDigitizer saved you from PDF hell!** ⭐
+
+*Upload once. Filter forever. Export instantly.*
 
 </div>
