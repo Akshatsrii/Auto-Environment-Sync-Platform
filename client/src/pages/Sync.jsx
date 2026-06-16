@@ -1,17 +1,21 @@
-import { useState } from "react";
+import { useState } from 'react'
+
 function Sync() {
+  const [repoUrl, setRepoUrl] = useState('')
+  const [analyzed, setAnalyzed] = useState(false)
+
   const workflow = [
-    { label: 'Repository Connected',   color: '#16a34a' },
-    { label: 'Dependencies Detected',  color: '#3b82f6' },
-    { label: 'Docker Generation',      color: '#9333ea' },
-    { label: 'Environment Validation', color: '#ca8a04' },
+    { label: 'Repository Connected',   color: 'bg-green-500' },
+    { label: 'Dependencies Detected',  color: 'bg-blue-500' },
+    { label: 'Docker Generation',      color: 'bg-purple-500' },
+    { label: 'Environment Validation', color: 'bg-yellow-500' },
   ]
 
   const services = [
-    { label: 'Node.js',  bg: '#dbeafe', color: '#1d4ed8' },
-    { label: 'MongoDB',  bg: '#dcfce7', color: '#16a34a' },
-    { label: 'Redis',    bg: '#fef9c3', color: '#ca8a04' },
-    { label: 'Docker',   bg: '#f3e8ff', color: '#9333ea' },
+    { label: 'Node.js', className: 'bg-blue-100 text-blue-700' },
+    { label: 'MongoDB', className: 'bg-green-100 text-green-700' },
+    { label: 'Redis',   className: 'bg-yellow-100 text-yellow-700' },
+    { label: 'Docker',  className: 'bg-purple-100 text-purple-700' },
   ]
 
   const preview = [
@@ -21,154 +25,69 @@ function Sync() {
   ]
 
   const changes = [
-  {
-    type: "Add",
-    item: "REDIS_URL variable",
-  },
-  {
-    type: "Update",
-    item: "NODE_VERSION",
-  },
-  {
-    type: "Delete",
-    item: "OLD_API_KEY",
-  },
-];
-const [repoUrl, setRepoUrl] = useState("");
-const [analyzed, setAnalyzed] = useState(false);
+    { type: 'Add',    item: 'REDIS_URL variable' },
+    { type: 'Update', item: 'NODE_VERSION' },
+    { type: 'Delete', item: 'OLD_API_KEY' },
+  ]
+
+  const changeStyle = (type) => {
+    if (type === 'Add')    return 'bg-green-100 text-green-700'
+    if (type === 'Update') return 'bg-blue-100 text-blue-700'
+    return                        'bg-red-100 text-red-600'
+  }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <div className="flex flex-col gap-6">
 
       {/* Header */}
       <div>
-        <h1 style={{ fontSize: '22px', fontWeight: 700, color: '#1e40af', marginBottom: '4px' }}>
-          Sync Repository
-        </h1>
-       <div>
-  <h1>Sync Repository</h1>
-
-  <p>
-    Analyze repositories and generate environments.
-  </p>
-
-</div>
+        <h1 className="text-xl font-bold text-blue-800 mb-1">Sync Repository</h1>
+        <p className="text-slate-500 text-sm">Analyze repositories and generate environments.</p>
       </div>
 
       {/* GitHub URL Input */}
-      <div style={{
-        background: '#ffffff',
-        border: '1px solid #bfdbfe',
-        borderRadius: '12px',
-        padding: '20px',
-        boxShadow: '0 1px 4px rgba(59,130,246,0.07)',
-      }}>
-        <h2 style={{ fontSize: '14px', fontWeight: 600, color: '#1e40af', marginBottom: '16px' }}>
-          GitHub Repository
-        </h2>
+      <div className="bg-white border border-blue-200 rounded-xl p-5 shadow-sm">
+        <h2 className="text-sm font-semibold text-blue-800 mb-4">GitHub Repository</h2>
         <input
           type="text"
           placeholder="https://github.com/user/repository"
           value={repoUrl}
-onChange={(e) => setRepoUrl(e.target.value)}
-          style={{
-            width: '100%',
-            background: '#f0f9ff',
-            border: '1px solid #bfdbfe',
-            borderRadius: '8px',
-            padding: '10px 14px',
-            fontSize: '13px',
-            color: '#1e293b',
-            fontFamily: 'inherit',
-            outline: 'none',
-            boxSizing: 'border-box',
-          }}
+          onChange={(e) => setRepoUrl(e.target.value)}
+          className="w-full bg-blue-50 border border-blue-200 rounded-lg px-4 py-2.5 text-sm text-slate-700 outline-none"
         />
-        <button onClick={() => {
-  if (repoUrl.trim() !== "") {
-    setAnalyzed(true);
-  }
-}}   style={{
-          marginTop: '12px',
-          background: '#3b82f6',
-          color: '#fff',
-          border: 'none',
-          borderRadius: '8px',
-          padding: '10px 20px',
-          fontSize: '13px',
-          fontWeight: 600,
-          fontFamily: 'inherit',
-          cursor: 'pointer',
-        }}>
+        <button
+          onClick={() => { if (repoUrl.trim()) setAnalyzed(true) }}
+          className="mt-3 bg-blue-600 text-white text-sm font-semibold px-5 py-2.5 rounded-lg cursor-pointer hover:bg-blue-700 transition"
+        >
           Analyze Repository
         </button>
       </div>
 
       {/* Repository Preview */}
-      <div style={{
-        background: '#ffffff',
-        border: '1px solid #bfdbfe',
-        borderRadius: '12px',
-        padding: '20px',
-        boxShadow: '0 1px 4px rgba(59,130,246,0.07)',
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-          <h2 style={{ fontSize: '14px', fontWeight: 600, color: '#1e40af' }}>
-            Repository Preview
-          </h2>
-          <span style={{
-            background: '#dcfce7', color: '#16a34a',
-            fontSize: '12px', fontWeight: 600,
-            padding: '3px 10px', borderRadius: '20px',
-          }}>
+      <div className="bg-white border border-blue-200 rounded-xl p-5 shadow-sm">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-sm font-semibold text-blue-800">Repository Preview</h2>
+          <span className="bg-green-100 text-green-700 text-xs font-semibold px-3 py-1 rounded-full">
             Ready
           </span>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
+        <div className="grid grid-cols-3 gap-3">
           {preview.map(item => (
-            <div key={item.label} style={{
-              background: '#f0f9ff',
-              border: '1px solid #bfdbfe',
-              borderRadius: '8px',
-              padding: '12px 14px',
-            }}>
-              <p style={{ fontSize: '11px', color: '#64748b', marginBottom: '4px' }}>{item.label}</p>
-              <p style={{ fontSize: '13px', fontWeight: 600, color: '#1e293b' }}>{item.value}</p>
+            <div key={item.label} className="bg-blue-50 border border-blue-200 rounded-lg px-4 py-3">
+              <p className="text-xs text-slate-500 mb-1">{item.label}</p>
+              <p className="text-sm font-semibold text-slate-800">{item.value}</p>
             </div>
           ))}
         </div>
       </div>
 
       {/* Analysis Workflow */}
-      <div style={{
-        background: '#ffffff',
-        border: '1px solid #bfdbfe',
-        borderRadius: '12px',
-        padding: '20px',
-        boxShadow: '0 1px 4px rgba(59,130,246,0.07)',
-      }}>
-        <h2 style={{ fontSize: '14px', fontWeight: 600, color: '#1e40af', marginBottom: '16px' }}>
-          Analysis Workflow
-        </h2>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+      <div className="bg-white border border-blue-200 rounded-xl p-5 shadow-sm">
+        <h2 className="text-sm font-semibold text-blue-800 mb-4">Analysis Workflow</h2>
+        <div className="flex flex-col gap-2">
           {workflow.map(step => (
-            <div key={step.label} style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              background: '#f0f9ff',
-              border: '1px solid #bfdbfe',
-              borderRadius: '8px',
-              padding: '12px 14px',
-              fontSize: '13px',
-              color: '#334155',
-            }}>
-              <span style={{
-                width: '10px', height: '10px',
-                borderRadius: '50%',
-                background: step.color,
-                flexShrink: 0,
-              }} />
+            <div key={step.label} className="flex items-center gap-3 bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 text-sm text-slate-700">
+              <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${step.color}`} />
               {step.label}
             </div>
           ))}
@@ -176,98 +95,33 @@ onChange={(e) => setRepoUrl(e.target.value)}
       </div>
 
       {/* Detected Services */}
-      <div style={{
-        background: '#ffffff',
-        border: '1px solid #bfdbfe',
-        borderRadius: '12px',
-        padding: '20px',
-        boxShadow: '0 1px 4px rgba(59,130,246,0.07)',
-      }}>
-        <h2 style={{ fontSize: '14px', fontWeight: 600, color: '#1e40af', marginBottom: '16px' }}>
-          Detected Services
-        </h2>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+      <div className="bg-white border border-blue-200 rounded-xl p-5 shadow-sm">
+        <h2 className="text-sm font-semibold text-blue-800 mb-4">Detected Services</h2>
+        <div className="flex flex-wrap gap-2">
           {services.map(s => (
-            <span key={s.label} style={{
-              background: s.bg,
-              color: s.color,
-              padding: '6px 14px',
-              borderRadius: '20px',
-              fontSize: '13px',
-              fontWeight: 500,
-            }}>
+            <span key={s.label} className={`text-sm font-medium px-4 py-1.5 rounded-full ${s.className}`}>
               {s.label}
             </span>
           ))}
         </div>
-        </div>
-
-        {/* Changes Preview */}
-
-<div
-  style={{
-    background: "#ffffff",
-    border: "1px solid #bfdbfe",
-    borderRadius: "12px",
-    padding: "20px",
-    boxShadow: "0 1px 4px rgba(59,130,246,0.07)",
-  }}
->
-  <h2
-    style={{
-      fontSize: "14px",
-      fontWeight: 600,
-      color: "#1e40af",
-      marginBottom: "16px",
-    }}
-  >
-    Changes Preview
-  </h2>
-
-  {changes.map((change, index) => (
-  <div
-    key={index}
-    style={{
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center",
-      padding: "14px 12px",
-      marginBottom: "8px",
-      background: "#f8fafc",
-      border: "1px solid #e2e8f0",
-      borderRadius: "8px",
-    }}
-  >
-    <span>{change.item}</span>
-
-    <span
-      style={{
-        background:
-          change.type === "Add"
-            ? "#dcfce7"
-            : change.type === "Update"
-            ? "#dbeafe"
-            : "#fee2e2",
-
-        color:
-          change.type === "Add"
-            ? "#16a34a"
-            : change.type === "Update"
-            ? "#2563eb"
-            : "#dc2626",
-
-        padding: "4px 10px",
-        borderRadius: "20px",
-        fontSize: "12px",
-        fontWeight: 600,
-      }}
-    >
-      {change.type}
-    </span>
-  </div>
-))}
-</div>
       </div>
+
+      {/* Changes Preview */}
+      <div className="bg-white border border-blue-200 rounded-xl p-5 shadow-sm">
+        <h2 className="text-sm font-semibold text-blue-800 mb-4">Changes Preview</h2>
+        <div className="flex flex-col gap-2">
+          {changes.map((change, i) => (
+            <div key={i} className="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-lg px-4 py-3">
+              <span className="text-sm text-slate-700">{change.item}</span>
+              <span className={`text-xs font-semibold px-3 py-1 rounded-full ${changeStyle(change.type)}`}>
+                {change.type}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+    </div>
   )
 }
 

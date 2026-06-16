@@ -21,70 +21,50 @@ const envStatus = [
   { name: 'Node.js', status: 'Active' },
 ]
 
+const driftAlerts = [
+  { msg: 'Production environment missing REDIS_URL', className: 'bg-red-50 border border-red-200 text-red-600' },
+  { msg: 'Node version mismatch detected',           className: 'bg-yellow-50 border border-yellow-200 text-yellow-600' },
+  { msg: 'Docker image requires update',             className: 'bg-blue-50 border border-blue-200 text-blue-600' },
+]
+
+const quickActions = [
+  { label: 'Analyze Repository',    path: '/environments' },
+  { label: 'View Logs',             path: '/logs' },
+  { label: 'Compare Environments',  path: '/compare' },
+]
+
 function Dashboard() {
   const navigate = useNavigate()
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <div className="flex flex-col gap-6">
 
       {/* Header */}
       <div>
-        <h1 style={{ fontSize: '22px', fontWeight: 700, color: '#1e40af', marginBottom: '4px' }}>
-          Welcome Back 👋
-        </h1>
-        <p style={{ color: '#64748b', fontSize: '13px' }}>
-          Monitor repositories and environment synchronization.
-        </p>
+        <h1 className="text-xl font-bold text-blue-800 mb-1">Welcome Back 👋</h1>
+        <p className="text-slate-500 text-sm">Monitor repositories and environment synchronization.</p>
       </div>
 
       {/* Stats Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
+      <div className="grid grid-cols-4 gap-4">
         {stats.map(stat => (
-          <div key={stat.label} style={{
-            background: '#ffffff',
-            border: '1px solid #bfdbfe',
-            borderRadius: '12px',
-            padding: '20px',
-            boxShadow: '0 1px 4px rgba(59,130,246,0.07)',
-          }}>
-            <p style={{ color: '#64748b', fontSize: '12px', marginBottom: '8px' }}>{stat.label}</p>
-            <p style={{ color: '#1e40af', fontSize: '28px', fontWeight: 700 }}>{stat.value}</p>
+          <div key={stat.label} className="bg-white border border-blue-200 rounded-xl p-5 shadow-sm">
+            <p className="text-slate-500 text-xs mb-2">{stat.label}</p>
+            <p className="text-blue-800 text-3xl font-bold">{stat.value}</p>
           </div>
         ))}
       </div>
 
-      {/* Bottom Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+      {/* Activity + Status */}
+      <div className="grid grid-cols-2 gap-4">
 
         {/* Recent Activity */}
-        <div style={{
-          background: '#ffffff',
-          border: '1px solid #bfdbfe',
-          borderRadius: '12px',
-          padding: '20px',
-          boxShadow: '0 1px 4px rgba(59,130,246,0.07)',
-        }}>
-          <h2 style={{ color: '#1e40af', fontSize: '14px', fontWeight: 600, marginBottom: '16px' }}>
-            Recent Activity
-          </h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        <div className="bg-white border border-blue-200 rounded-xl p-5 shadow-sm">
+          <h2 className="text-sm font-semibold text-blue-800 mb-4">Recent Activity</h2>
+          <div className="flex flex-col gap-2">
             {activity.map((item, i) => (
-              <div key={i} style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '10px',
-                padding: '10px 12px',
-                background: '#f0f9ff',
-                borderRadius: '8px',
-                fontSize: '13px',
-                color: '#334155',
-              }}>
-                <span style={{
-                  width: '6px', height: '6px',
-                  borderRadius: '50%',
-                  background: '#3b82f6',
-                  flexShrink: 0,
-                }} />
+              <div key={i} className="flex items-center gap-3 bg-blue-50 rounded-lg px-3 py-2.5 text-sm text-slate-700">
+                <span className="w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0" />
                 {item}
               </div>
             ))}
@@ -92,35 +72,17 @@ function Dashboard() {
         </div>
 
         {/* Environment Status */}
-        <div style={{
-          background: '#ffffff',
-          border: '1px solid #bfdbfe',
-          borderRadius: '12px',
-          padding: '20px',
-          boxShadow: '0 1px 4px rgba(59,130,246,0.07)',
-        }}>
-          <h2 style={{ color: '#1e40af', fontSize: '14px', fontWeight: 600, marginBottom: '16px' }}>
-            Environment Status
-          </h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            {envStatus.map((env) => (
-              <div key={env.name} style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '10px 12px',
-                background: '#f0f9ff',
-                borderRadius: '8px',
-              }}>
-                <span style={{ fontSize: '13px', color: '#334155' }}>{env.name}</span>
-                <span style={{
-                  fontSize: '11px',
-                  fontWeight: 600,
-                  padding: '3px 10px',
-                  borderRadius: '20px',
-                  background: env.status === 'Active' ? '#dcfce7' : '#fef9c3',
-                  color: env.status === 'Active' ? '#16a34a' : '#ca8a04',
-                }}>
+        <div className="bg-white border border-blue-200 rounded-xl p-5 shadow-sm">
+          <h2 className="text-sm font-semibold text-blue-800 mb-4">Environment Status</h2>
+          <div className="flex flex-col gap-2">
+            {envStatus.map(env => (
+              <div key={env.name} className="flex items-center justify-between bg-blue-50 rounded-lg px-3 py-2.5">
+                <span className="text-sm text-slate-700">{env.name}</span>
+                <span className={`text-xs font-semibold px-3 py-1 rounded-full ${
+                  env.status === 'Active'
+                    ? 'bg-green-100 text-green-700'
+                    : 'bg-yellow-100 text-yellow-700'
+                }`}>
                   {env.status}
                 </span>
               </div>
@@ -130,97 +92,26 @@ function Dashboard() {
       </div>
 
       {/* Drift Alerts */}
-
-<div
-  style={{
-    background: "#ffffff",
-    border: "1px solid #bfdbfe",
-    borderRadius: "12px",
-    padding: "20px",
-    boxShadow: "0 1px 4px rgba(59,130,246,0.07)",
-  }}
->
-  <h2
-    style={{
-      color: "#1e40af",
-      fontSize: "14px",
-      fontWeight: 600,
-      marginBottom: "16px",
-    }}
-  >
-    Drift Alerts
-  </h2>
-
-  <div
-    style={{
-      background: "#fef2f2",
-      border: "1px solid #fecaca",
-      padding: "12px",
-      borderRadius: "8px",
-      color: "#dc2626",
-      marginBottom: "10px",
-    }}
-  >
-    Production environment missing REDIS_URL
-  </div>
-
-  <div
-    style={{
-      background: "#fffbeb",
-      border: "1px solid #fde68a",
-      padding: "12px",
-      borderRadius: "8px",
-      color: "#ca8a04",
-      marginBottom: "10px",
-    }}
-  >
-    Node version mismatch detected
-  </div>
-
-  <div
-    style={{
-      background: "#eff6ff",
-      border: "1px solid #bfdbfe",
-      padding: "12px",
-      borderRadius: "8px",
-      color: "#2563eb",
-    }}
-  >
-    Docker image requires update
-  </div>
-</div>
+      <div className="bg-white border border-blue-200 rounded-xl p-5 shadow-sm">
+        <h2 className="text-sm font-semibold text-blue-800 mb-4">Drift Alerts</h2>
+        <div className="flex flex-col gap-2">
+          {driftAlerts.map((alert, i) => (
+            <div key={i} className={`rounded-lg px-4 py-3 text-sm ${alert.className}`}>
+              {alert.msg}
+            </div>
+          ))}
+        </div>
+      </div>
 
       {/* Quick Actions */}
-      <div style={{
-        background: '#ffffff',
-        border: '1px solid #bfdbfe',
-        borderRadius: '12px',
-        padding: '20px',
-        boxShadow: '0 1px 4px rgba(59,130,246,0.07)',
-      }}>
-        <h2 style={{ color: '#1e40af', fontSize: '14px', fontWeight: 600, marginBottom: '16px' }}>
-          Quick Actions
-        </h2>
-        <div style={{ display: 'flex', gap: '12px' }}>
-          {[
-            { label: 'Analyze Repository', path: '/environments' },
-            { label: 'View Logs',          path: '/logs' },
-            { label: 'Compare Environments', path: '/compare' },
-          ].map(action => (
+      <div className="bg-white border border-blue-200 rounded-xl p-5 shadow-sm">
+        <h2 className="text-sm font-semibold text-blue-800 mb-4">Quick Actions</h2>
+        <div className="flex gap-3">
+          {quickActions.map(action => (
             <button
               key={action.label}
               onClick={() => navigate(action.path)}
-              style={{
-                background: '#eff6ff',
-                border: '1px solid #bfdbfe',
-                borderRadius: '8px',
-                padding: '10px 20px',
-                color: '#1d4ed8',
-                fontSize: '13px',
-                fontWeight: 500,
-                cursor: 'pointer',
-                fontFamily: 'inherit',
-              }}
+              className="bg-blue-50 border border-blue-200 text-blue-700 text-sm font-medium px-5 py-2.5 rounded-lg cursor-pointer hover:bg-blue-100 transition"
             >
               {action.label}
             </button>
