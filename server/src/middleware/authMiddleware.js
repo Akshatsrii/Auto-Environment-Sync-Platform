@@ -13,12 +13,23 @@ const protect = async (req, res, next) => {
   }
 
   try {
+    console.log("TOKEN RECEIVED:", token)
+    console.log("JWT SECRET:", process.env.JWT_SECRET)
+
     const decoded = jwt.verify(token, process.env.JWT_SECRET)
+
+    console.log("DECODED:", decoded)
+
     req.user = await User.findById(decoded.id).select('-password')
     next()
+
   } catch (error) {
-    return res.status(401).json({ message: 'Not authorized, token failed' })
+    console.log("JWT ERROR:", error)
+
+    return res.status(401).json({
+      message: error.message,
+    })
   }
-}
+}   // <-- YE BRACKET MISSING THA
 
 module.exports = { protect }
