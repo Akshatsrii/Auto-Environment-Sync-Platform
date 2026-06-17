@@ -1,28 +1,121 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 function Environments() {
   const services = ['Node.js', 'MongoDB', 'Redis', 'Docker']
   const files = ['Dockerfile', 'docker-compose.yml', '.env.example', 'README.md']
 
-  const [environments, setEnvironments] = useState([
-    { name: 'Development', status: 'Active',  variables: 24 },
-    { name: 'Staging',     status: 'Active',  variables: 18 },
-    { name: 'Production',  status: 'Warning', variables: 20 },
-  ])
+ const [environments, setEnvironments] = useState([])
 
   const [showModal, setShowModal]       = useState(false)
   const [envName, setEnvName]           = useState('')
   const [envVariables, setEnvVariables] = useState('')
   const [envStatus, setEnvStatus]       = useState('Active')
 
-  const handleAddEnvironment = () => {
-    if (!envName || !envVariables) return
-    setEnvironments([...environments, { name: envName, variables: Number(envVariables), status: envStatus }])
+  const fetchEnvironments = async () => {
+  try {
+    const token = localStorage.getItem('token')
+    console.log("TOKEN =>", token)
+
+    const res = await fetch(
+      'http://localhost:5000/api/environments',
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+
+    const data = await res.json()
+    console.log("DATA =>", data)
+    console.log(
+  JSON.stringify(data.environments, null, 2)
+)
+    
+    setEnvironments(data.environments || [])
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+useEffect(() => {
+  fetchEnvironments()
+}, [])
+
+const handleDeleteEnvironment = async (id) => {
+  const confirmDelete = window.confirm(
+    'Are you sure you want to delete this environment?'
+  )
+
+  if (!confirmDelete) return
+
+  try {
+    const token = localStorage.getItem('token')
+
+    const res = await fetch(
+      `http://localhost:5000/api/environments/${id}`,
+      {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+
+    const data = await res.json()
+
+    console.log(data)
+
+    fetchEnvironments()
+  } catch (error) {
+    console.error(error)
+  }
+}
+ 
+  const handleAddEnvironment = async () => {
+    console.log("SAVE BUTTON CLICKED")
+    if (!envName || !envVariables) {
+  alert('Fill all fields')
+  return
+}
+  try {
+    const token = localStorage.getItem('token')
+
+    const res = await fetch(
+      'http://localhost:5000/api/environments',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          name: envName,
+          description: `${envName} Environment`,
+          variables: [
+            {
+              key: 'PORT',
+              value: envVariables,
+            },
+          ],
+        }),
+      }
+    )
+
+    const data = await res.json()
+
+    console.log(data)
+
+    fetchEnvironments()
+
     setEnvName('')
     setEnvVariables('')
     setEnvStatus('Active')
     setShowModal(false)
+
+  } catch (error) {
+    console.error(error)
   }
+}
 
   return (
     <div className="flex flex-col gap-6">
@@ -44,18 +137,22 @@ function Environments() {
       </div>
 
       {/* Environment Cards */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="flex flex-col gap-4">
         {environments.map(env => (
-          <div key={env.name} className="bg-white border border-blue-200 rounded-xl p-5 shadow-sm">
+          <div key={env._id} className="bg-white border border-blue-200 rounded-xl p-5 shadow-sm">
             <h3 className="text-sm font-semibold text-blue-800 mb-2">{env.name}</h3>
-            <p className="text-slate-500 text-sm mb-3">Variables: {env.variables}</p>
-            <span className={`text-xs font-semibold px-3 py-1 rounded-full ${
-              env.status === 'Active'
-                ? 'bg-green-100 text-green-700'
-                : 'bg-yellow-100 text-yellow-700'
-            }`}>
-              {env.status}
-            </span>
+           <p className="text-slate-500 text-sm mb-3">
+  Variables: {env.variables?.length || 0}
+</p>
+            <span className="text-xs font-semibold px-3 py-1 rounded-full bg-green-100 text-green-700">
+  Active
+</span>
+<button
+  onClick={() => handleDeleteEnvironment(env._id)}
+  className="mt-3 bg-red-500 text-white px-3 py-1 rounded text-xs"
+>
+  Delete
+</button>
           </div>
         ))}
       </div>
@@ -73,23 +170,23 @@ function Environments() {
           </thead>
           <tbody>
             {environments.map(env => (
-              <tr key={env.name} className="border-t border-slate-100">
+              <tr key={env._id} className="border-t border-slate-100">
                 <td className="px-3 py-3 text-sm font-medium text-slate-700">{env.name}</td>
-                <td className="px-3 py-3 text-sm text-slate-600">{env.variables}</td>
+                <td className="px-3 py-3 text-sm text-slate-600">
+  {env.variables?.length || 0}
+</td>
                 <td className="px-3 py-3">
-                  <span className={`text-xs font-semibold px-3 py-1 rounded-full ${
-                    env.status === 'Active'
-                      ? 'bg-green-100 text-green-700'
-                      : 'bg-yellow-100 text-yellow-700'
-                  }`}>
-                    {env.status}
-                  </span>
+                  <span className="text-xs font-semibold px-3 py-1 rounded-full bg-green-100 text-green-700">
+  Active
+</span>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
+      
 
       {/* Health Score */}
       <div className="bg-white border border-blue-200 rounded-xl p-6 shadow-sm flex items-center justify-between">
@@ -168,13 +265,16 @@ function Environments() {
           <div className="bg-white rounded-xl p-6 w-96 shadow-xl">
             <h2 className="text-sm font-semibold text-blue-800 mb-4">Add Environment</h2>
             <div className="flex flex-col gap-3 mb-5">
-              <input
-                type="text"
-                placeholder="Environment Name"
-                value={envName}
-                onChange={(e) => setEnvName(e.target.value)}
-                className="px-3 py-2.5 border border-slate-300 rounded-lg text-sm outline-none"
-              />
+              <select
+  value={envName}
+  onChange={(e) => setEnvName(e.target.value)}
+  className="px-3 py-2.5 border border-slate-300 rounded-lg text-sm outline-none"
+>
+  <option value="">Select Environment</option>
+  <option value="Development">Development</option>
+  <option value="Staging">Staging</option>
+  <option value="Production">Production</option>
+</select>
               <input
                 type="number"
                 placeholder="Variables Count"

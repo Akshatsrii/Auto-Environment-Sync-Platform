@@ -75,4 +75,4 @@ const getMe = async (req, res) => {
   res.json({ user: req.user })
 }
 
-module.exports = { register, login, getMe }
+module.exports = { register, login, getMe } 

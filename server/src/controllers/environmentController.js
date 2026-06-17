@@ -65,9 +65,13 @@ const deleteEnvironment = async (req, res) => {
     }
 
     res.json({ message: 'Environment deleted successfully' })
-  } catch (error) {
-    res.status(500).json({ message: error.message })
-  }
+} catch (error) {
+  console.log("DELETE ENV ERROR =>", error)
+
+  res.status(500).json({
+    message: error.message,
+  })
+}
 }
 
 module.exports = { createEnvironment, getEnvironments, getEnvironmentById, deleteEnvironment }
