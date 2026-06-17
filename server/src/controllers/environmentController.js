@@ -1,4 +1,6 @@
+const mongoose = require('mongoose')
 const Environment = require('../models/Environment')
+const { compareVariables, summarize } = require('../utils/compareEnvironments')
 
 // POST /api/environments
 const createEnvironment = async (req, res) => {
@@ -74,4 +76,44 @@ const deleteEnvironment = async (req, res) => {
 }
 }
 
-module.exports = { createEnvironment, getEnvironments, getEnvironmentById, deleteEnvironment }
+// GET /api/environments/compare?source=<id>&target=<id>
+const compareEnvironments = async (req, res) => {
+  try {
+    const { source, target } = req.query
+
+    if (!source || !target) {
+      return res.status(400).json({ message: 'source and target environment IDs are required' })
+    }
+
+    if (source === target) {
+      return res.status(400).json({ message: 'Select two different environments to compare' })
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(source) || !mongoose.Types.ObjectId.isValid(target)) {
+      return res.status(400).json({ message: 'Invalid environment ID' })
+    }
+
+    const [sourceEnv, targetEnv] = await Promise.all([
+      Environment.findOne({ _id: source, createdBy: req.user._id }),
+      Environment.findOne({ _id: target, createdBy: req.user._id }),
+    ])
+
+    if (!sourceEnv || !targetEnv) {
+      return res.status(404).json({ message: 'One or both environments not found' })
+    }
+
+    const differences = compareVariables(sourceEnv.variables, targetEnv.variables)
+    const summary = summarize(differences)
+
+    res.json({
+      source: { id: sourceEnv._id, name: sourceEnv.name },
+      target: { id: targetEnv._id, name: targetEnv.name },
+      differences,
+      summary,
+    })
+  } catch (error) {
+    res.status(500).json({ message: error.message })
+  }
+}
+
+module.exports = { createEnvironment, getEnvironments, getEnvironmentById, deleteEnvironment, compareEnvironments }
