@@ -1,67 +1,77 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import StatsCard from '../components/StatsCard'
+
+const API_BASE = 'http://localhost:5000/api/environments'
+
+const STATUS_STYLES = {
+  matched:  { label: 'Matched',  badge: 'bg-green-100 text-green-700',   row: 'text-slate-600' },
+  modified: { label: 'Modified', badge: 'bg-yellow-100 text-yellow-700', row: 'text-yellow-700 font-medium' },
+  missing:  { label: 'Missing',  badge: 'bg-red-100 text-red-700',       row: 'text-red-600 font-medium' },
+  extra:    { label: 'Extra',    badge: 'bg-blue-100 text-blue-700',     row: 'text-blue-600 font-medium' },
+}
 
 function Compare() {
-  const [environmentA, setEnvironmentA] = useState('Production')
-  const [environmentB, setEnvironmentB] = useState('Development')
+  const [environments, setEnvironments] = useState([])
+  const [sourceId, setSourceId] = useState('')
+  const [targetId, setTargetId] = useState('')
+  const [result, setResult] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
-  const envA = {
-    label: 'Environment A',
-    tag: 'Production',
-    tagClass: 'bg-blue-100 text-blue-700',
-    rows: [
-      { key: 'Node Version', value: 'v20',        valueClass: 'text-slate-800' },
-      { key: 'MongoDB',      value: 'Available',  valueClass: 'text-green-600' },
-      { key: 'Redis',        value: 'Available',  valueClass: 'text-green-600' },
-      { key: 'Docker',       value: 'Configured', valueClass: 'text-green-600' },
-    ],
+  const fetchEnvironments = async () => {
+    try {
+      const token = localStorage.getItem('token')
+      const res = await fetch(API_BASE, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      const data = await res.json()
+      setEnvironments(data.environments || [])
+    } catch (err) {
+      console.error(err)
+    }
   }
 
-  const envB = {
-    label: 'Environment B',
-    tag: 'Development',
-    tagClass: 'bg-purple-100 text-purple-700',
-    rows: [
-      { key: 'Node Version', value: 'v22',        valueClass: 'text-slate-800' },
-      { key: 'MongoDB',      value: 'Available',  valueClass: 'text-green-600' },
-      { key: 'Redis',        value: 'Missing',    valueClass: 'text-red-500' },
-      { key: 'Docker',       value: 'Configured', valueClass: 'text-green-600' },
-    ],
+  useEffect(() => {
+    fetchEnvironments()
+  }, [])
+
+  const handleCompare = async () => {
+    if (!sourceId || !targetId) {
+      setError('Select both environments first')
+      return
+    }
+    if (sourceId === targetId) {
+      setError('Source and target must be different environments')
+      return
+    }
+
+    setError('')
+    setLoading(true)
+    setResult(null)
+
+    try {
+      const token = localStorage.getItem('token')
+      const res = await fetch(
+        `${API_BASE}/compare?source=${sourceId}&target=${targetId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
+      const data = await res.json()
+
+      if (!res.ok) {
+        setError(data.message || 'Comparison failed')
+        return
+      }
+
+      setResult(data)
+    } catch (err) {
+      console.error(err)
+      setError('Something went wrong while comparing')
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const summary = [
-    { text: '✓ Both environments support MongoDB',         className: 'bg-green-50 border border-green-200 text-green-700' },
-    { text: '⚠ Redis missing in Environment B',           className: 'bg-yellow-50 border border-yellow-200 text-yellow-700' },
-    { text: 'ℹ Environment B uses newer Node.js version', className: 'bg-blue-50 border border-blue-200 text-blue-700' },
-  ]
-
-  const diffRows = [
-    { property: 'Node Version', a: 'v20',        b: 'v22' },
-    { property: 'MongoDB',      a: 'Available',  b: 'Available' },
-    { property: 'Redis',        a: 'Available',  b: 'Missing' },
-    { property: 'Docker',       a: 'Configured', b: 'Configured' },
-  ]
-
-  const card = (env) => (
-    <div className="bg-white border border-blue-200 rounded-xl p-5 shadow-sm">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-sm font-semibold text-blue-800">{env.label}</h2>
-        <span className={`text-xs font-semibold px-3 py-1 rounded-full ${env.tagClass}`}>
-          {env.tag}
-        </span>
-      </div>
-      <div className="flex flex-col">
-        {env.rows.map((row, i) => (
-          <div
-            key={row.key}
-            className={`flex justify-between items-center py-3 ${i < env.rows.length - 1 ? 'border-b border-slate-100' : ''}`}
-          >
-            <span className="text-sm text-slate-500">{row.key}</span>
-            <span className={`text-sm font-semibold ${row.valueClass}`}>{row.value}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
+  const envLabel = (env) => `${env.name} · ${env.variables?.length || 0} vars`
 
   return (
     <div className="flex flex-col gap-6">
@@ -69,80 +79,120 @@ function Compare() {
       {/* Header */}
       <div>
         <h1 className="text-xl font-bold text-blue-800 mb-1">Compare Environments</h1>
-        <p className="text-slate-500 text-sm">Compare two repository environments side by side.</p>
+        <p className="text-slate-500 text-sm">Run drift detection between any two saved environments.</p>
       </div>
 
       {/* Selector */}
       <div className="bg-white border border-blue-200 rounded-xl p-5">
-        <div className="flex gap-4">
+        <div className="flex flex-wrap gap-4 items-center">
           <select
-            value={environmentA}
-            onChange={(e) => setEnvironmentA(e.target.value)}
+            value={sourceId}
+            onChange={(e) => setSourceId(e.target.value)}
             className="px-3 py-2 border border-slate-300 rounded-lg text-sm text-slate-700 outline-none"
           >
-            <option>Production</option>
-            <option>Development</option>
-            <option>Staging</option>
+            <option value="">Source environment</option>
+            {environments.map((env) => (
+              <option key={env._id} value={env._id}>{envLabel(env)}</option>
+            ))}
           </select>
+
+          <span className="text-slate-400 text-sm">vs</span>
 
           <select
-            value={environmentB}
-            onChange={(e) => setEnvironmentB(e.target.value)}
+            value={targetId}
+            onChange={(e) => setTargetId(e.target.value)}
             className="px-3 py-2 border border-slate-300 rounded-lg text-sm text-slate-700 outline-none"
           >
-            <option>Development</option>
-            <option>Production</option>
-            <option>Staging</option>
+            <option value="">Target environment</option>
+            {environments.map((env) => (
+              <option key={env._id} value={env._id}>{envLabel(env)}</option>
+            ))}
           </select>
 
-          <button className="bg-blue-600 text-white text-sm font-medium px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-700 transition">
-            Compare
+          <button
+            onClick={handleCompare}
+            disabled={loading}
+            className="bg-blue-600 text-white text-sm font-medium px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-700 transition disabled:opacity-50"
+          >
+            {loading ? 'Comparing...' : 'Compare'}
           </button>
         </div>
+
+        {error && <p className="text-red-500 text-sm mt-3">{error}</p>}
       </div>
 
-      {/* Compare Cards */}
-      <div className="grid grid-cols-2 gap-4">
-        {card(envA)}
-        {card(envB)}
-      </div>
+      {result && (
+        <>
+          {/* Drift Summary Stats */}
+          <div className="grid grid-cols-4 gap-4">
+            <StatsCard title="Matched"  value={result.summary.matched}  color="text-green-600" />
+            <StatsCard title="Modified" value={result.summary.modified} color="text-yellow-600" />
+            <StatsCard title="Missing"  value={result.summary.missing}  color="text-red-600" />
+            <StatsCard title="Extra"    value={result.summary.extra}    color="text-blue-600" />
+          </div>
 
-      {/* Difference Table */}
-      <div className="bg-white border border-blue-200 rounded-xl p-5 shadow-sm">
-        <h2 className="text-sm font-semibold text-blue-800 mb-4">Difference Table</h2>
-        <table className="w-full border-collapse">
-          <thead>
-            <tr>
-              <th className="text-left text-xs font-semibold text-slate-500 px-3 py-3">Property</th>
-              <th className="text-left text-xs font-semibold text-slate-500 px-3 py-3">Environment A</th>
-              <th className="text-left text-xs font-semibold text-slate-500 px-3 py-3">Environment B</th>
-            </tr>
-          </thead>
-          <tbody>
-            {diffRows.map((row, i) => (
-              <tr key={i} className="border-t border-slate-100">
-                <td className="px-3 py-3 text-sm text-slate-700 font-medium">{row.property}</td>
-                <td className="px-3 py-3 text-sm text-slate-600">{row.a}</td>
-                <td className={`px-3 py-3 text-sm font-medium ${row.b === 'Missing' ? 'text-red-500' : 'text-slate-600'}`}>
-                  {row.b}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+          {/* Difference Table */}
+          <div className="bg-white border border-blue-200 rounded-xl p-5 shadow-sm">
+            <h2 className="text-sm font-semibold text-blue-800 mb-4">
+              {result.source.name} → {result.target.name}
+            </h2>
+            <table className="w-full border-collapse">
+              <thead>
+                <tr>
+                  <th className="text-left text-xs font-semibold text-slate-500 px-3 py-3">Key</th>
+                  <th className="text-left text-xs font-semibold text-slate-500 px-3 py-3">{result.source.name}</th>
+                  <th className="text-left text-xs font-semibold text-slate-500 px-3 py-3">{result.target.name}</th>
+                  <th className="text-left text-xs font-semibold text-slate-500 px-3 py-3">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {result.differences.map((diff) => {
+                  const style = STATUS_STYLES[diff.status]
+                  return (
+                    <tr key={diff.key} className="border-t border-slate-100">
+                      <td className="px-3 py-3 text-sm font-medium text-slate-700">{diff.key}</td>
+                      <td className={`px-3 py-3 text-sm ${style.row}`}>{diff.sourceValue ?? '—'}</td>
+                      <td className={`px-3 py-3 text-sm ${style.row}`}>{diff.targetValue ?? '—'}</td>
+                      <td className="px-3 py-3">
+                        <span className={`text-xs font-semibold px-3 py-1 rounded-full ${style.badge}`}>
+                          {style.label}
+                        </span>
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
 
-      {/* Summary */}
-      <div className="bg-white border border-blue-200 rounded-xl p-5 shadow-sm">
-        <h2 className="text-sm font-semibold text-blue-800 mb-4">Comparison Summary</h2>
-        <div className="flex flex-col gap-2">
-          {summary.map((item, i) => (
-            <div key={i} className={`rounded-lg px-4 py-3 text-sm ${item.className}`}>
-              {item.text}
+          {/* Summary */}
+          <div className="bg-white border border-blue-200 rounded-xl p-5 shadow-sm">
+            <h2 className="text-sm font-semibold text-blue-800 mb-4">Comparison Summary</h2>
+            <div className="flex flex-col gap-2">
+              {result.summary.modified > 0 && (
+                <div className="rounded-lg px-4 py-3 text-sm bg-yellow-50 border border-yellow-200 text-yellow-700">
+                  ⚠ {result.summary.modified} variable(s) have different values between environments
+                </div>
+              )}
+              {result.summary.missing > 0 && (
+                <div className="rounded-lg px-4 py-3 text-sm bg-red-50 border border-red-200 text-red-600">
+                  🔴 {result.summary.missing} variable(s) missing in {result.target.name}
+                </div>
+              )}
+              {result.summary.extra > 0 && (
+                <div className="rounded-lg px-4 py-3 text-sm bg-blue-50 border border-blue-200 text-blue-600">
+                  🔵 {result.summary.extra} extra variable(s) found in {result.target.name}
+                </div>
+              )}
+              {result.summary.modified === 0 && result.summary.missing === 0 && result.summary.extra === 0 && (
+                <div className="rounded-lg px-4 py-3 text-sm bg-green-50 border border-green-200 text-green-700">
+                  ✓ No drift detected — both environments are in sync
+                </div>
+              )}
             </div>
-          ))}
-        </div>
-      </div>
+          </div>
+        </>
+      )}
 
     </div>
   )
