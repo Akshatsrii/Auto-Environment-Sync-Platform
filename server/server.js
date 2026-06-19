@@ -17,6 +17,7 @@ app.use(express.json())
 // Routes
 app.use('/api/auth', require('./src/routes/authRoutes'))
 app.use('/api/environments', require('./src/routes/environmentRoutes'))
+app.use('/api/sync', require('./src/routes/syncRoutes'))
 
 // Health Check
 app.get('/', (req, res) => {
