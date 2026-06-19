@@ -1,10 +1,6 @@
-const Environment = require('../models/Environment')
-const SyncLog = require('../models/SyncLog')
-const { compareEnvironments, generateSyncPlan } = require('../utils/diffEngine')
-
-// POST /api/sync/preview
+// POST /api/sync/execute
 // Body: { sourceEnvId, targetEnvId, removeExtra }
-const previewSync = async (req, res) => {
+const executeSync = async (req, res) => {
   try {
     const { sourceEnvId, targetEnvId, removeExtra = false } = req.body
 
@@ -22,16 +18,52 @@ const previewSync = async (req, res) => {
     const diffResult = compareEnvironments(sourceEnv, targetEnv)
     const syncPlan = generateSyncPlan(diffResult, removeExtra)
 
+    if (syncPlan.length === 0) {
+      return res.json({ message: 'No changes to sync. Environments are in sync.', changes: [] })
+    }
+
+    // Apply changes to target
+    let targetVars = [...targetEnv.variables]
+
+    syncPlan.forEach(change => {
+      if (change.action === 'add') {
+        targetVars.push({ key: change.key, value: change.value })
+      }
+      if (change.action === 'update') {
+        targetVars = targetVars.map(v =>
+          v.key === change.key ? { ...v.toObject?.() ?? v, value: change.newValue } : v
+        )
+      }
+      if (change.action === 'remove') {
+        targetVars = targetVars.filter(v => v.key !== change.key)
+      }
+    })
+
+    targetEnv.variables = targetVars
+    await targetEnv.save()
+
+    // Create audit log
+    const syncLog = await SyncLog.create({
+      sourceEnv: sourceEnv._id,
+      targetEnv: targetEnv._id,
+      changes: syncPlan.map(c => ({
+        key: c.key,
+        action: c.action === 'add' ? 'added' : c.action === 'update' ? 'updated' : 'removed',
+        oldValue: c.oldValue || '',
+        newValue: c.newValue || c.value || '',
+      })),
+      syncedBy: req.user._id,
+      status: 'success',
+    })
+
     res.json({
-      source: { id: sourceEnv._id, name: sourceEnv.name },
-      target: { id: targetEnv._id, name: targetEnv.name },
-      plan: syncPlan,
-      totalChanges: syncPlan.length,
-      isDryRun: true,
+      message: `Synced ${syncPlan.length} change(s) from ${sourceEnv.name} to ${targetEnv.name}`,
+      changes: syncPlan,
+      syncLogId: syncLog._id,
     })
   } catch (error) {
     res.status(500).json({ message: error.message })
   }
 }
 
-module.exports = { previewSync }
+module.exports = { previewSync, executeSync }
