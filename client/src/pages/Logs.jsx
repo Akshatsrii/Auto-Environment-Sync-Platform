@@ -1,119 +1,121 @@
-function Logs() {
-  const logs = [
-    { repo: 'Banking System',    status: 'Completed', health: '92%', date: 'Today' },
-    { repo: 'E-Commerce App',    status: 'Running',   health: '--',  date: 'Yesterday' },
-    { repo: 'Portfolio Website', status: 'Failed',    health: '65%', date: '2 Days Ago' },
-  ]
+import { useState, useEffect } from 'react'
 
-  const statusStyle = (status) => {
-    if (status === 'Completed') return { background: '#dcfce7', color: '#16a34a' }
-    if (status === 'Running')   return { background: '#fef9c3', color: '#ca8a04' }
-    return                             { background: '#fef2f2', color: '#dc2626' }
+function Logs() {
+  const [logs, setLogs] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+
+  const token = localStorage.getItem('token')
+
+  useEffect(() => {
+    fetchLogs()
+  }, [])
+
+  async function fetchLogs() {
+    setLoading(true)
+    setError('')
+    try {
+      const res = await fetch('http://localhost:5000/api/logs', {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.message)
+      setLogs(data.logs)
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
   }
 
+  const statusClass = (status) => {
+    if (status === 'success') return 'bg-green-100 text-green-700'
+    return 'bg-red-100 text-red-600'
+  }
+
+  const completed = logs.filter(l => l.status === 'success').length
+  const failed    = logs.filter(l => l.status === 'failed').length
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <div className="flex flex-col gap-6">
 
       {/* Header */}
       <div>
-        <h1 style={{ fontSize: '22px', fontWeight: 700, color: '#1e40af', marginBottom: '4px' }}>
-          Logs
-        </h1>
-        <p style={{ color: '#64748b', fontSize: '13px' }}>
-          Repository analysis history and activity logs.
-        </p>
+        <h1 className="text-xl font-bold text-blue-800 mb-1">Logs</h1>
+        <p className="text-slate-500 text-sm">Repository sync history and audit trail.</p>
       </div>
 
       {/* Table */}
-      <div style={{
-        background: '#ffffff',
-        border: '1px solid #bfdbfe',
-        borderRadius: '12px',
-        padding: '20px',
-        boxShadow: '0 1px 4px rgba(59,130,246,0.07)',
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
-          <h2 style={{ fontSize: '14px', fontWeight: 600, color: '#1e40af' }}>
-            Repository Activity
-          </h2>
-          <button style={{
-            background: '#3b82f6',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '8px',
-            padding: '8px 16px',
-            fontSize: '13px',
-            fontWeight: 500,
-            cursor: 'pointer',
-            fontFamily: 'inherit',
-          }}>
-            Export Logs
+      <div className="bg-white border border-blue-200 rounded-xl p-5 shadow-sm">
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="text-sm font-semibold text-blue-800">Sync Activity</h2>
+          <button
+            onClick={fetchLogs}
+            className="bg-blue-600 text-white text-sm font-medium px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-700 transition"
+          >
+            Refresh
           </button>
         </div>
 
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead>
-            <tr style={{ borderBottom: '1px solid #e2e8f0' }}>
-              {['Repository', 'Status', 'Health Score', 'Date'].map(col => (
-                <th key={col} style={{
-                  textAlign: 'left',
-                  padding: '10px 12px',
-                  fontSize: '12px',
-                  fontWeight: 500,
-                  color: '#64748b',
-                }}>
-                  {col}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {logs.map((log, i) => (
-              <tr key={i} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                <td style={{ padding: '14px 12px', fontSize: '13px', fontWeight: 500, color: '#1e293b' }}>
-                  {log.repo}
-                </td>
-                <td style={{ padding: '14px 12px' }}>
-                  <span style={{
-                    ...statusStyle(log.status),
-                    padding: '3px 10px',
-                    borderRadius: '20px',
-                    fontSize: '12px',
-                    fontWeight: 600,
-                  }}>
-                    {log.status}
-                  </span>
-                </td>
-                <td style={{ padding: '14px 12px', fontSize: '13px', fontWeight: 600, color: '#334155' }}>
-                  {log.health}
-                </td>
-                <td style={{ padding: '14px 12px', fontSize: '13px', color: '#64748b' }}>
-                  {log.date}
-                </td>
+        {loading && <p className="text-sm text-slate-500">Loading logs...</p>}
+        {error && <p className="text-sm text-red-600">{error}</p>}
+
+        {!loading && !error && logs.length === 0 && (
+          <p className="text-sm text-slate-500">No sync activity yet.</p>
+        )}
+
+        {!loading && logs.length > 0 && (
+          <table className="w-full border-collapse">
+            <thead>
+              <tr className="border-b border-slate-200">
+                <th className="text-left text-xs font-medium text-slate-500 px-3 py-3">Source → Target</th>
+                <th className="text-left text-xs font-medium text-slate-500 px-3 py-3">Changes</th>
+                <th className="text-left text-xs font-medium text-slate-500 px-3 py-3">Status</th>
+                <th className="text-left text-xs font-medium text-slate-500 px-3 py-3">Synced By</th>
+                <th className="text-left text-xs font-medium text-slate-500 px-3 py-3">Date</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {logs.map((log) => (
+                <tr key={log._id} className="border-b border-slate-100 hover:bg-slate-50 transition">
+                  <td className="px-3 py-4 text-sm font-medium text-slate-800">
+                    {log.sourceEnv?.name || '—'} → {log.targetEnv?.name || '—'}
+                  </td>
+                  <td className="px-3 py-4 text-sm text-slate-600">
+                    {log.changes?.length || 0} change(s)
+                  </td>
+                  <td className="px-3 py-4">
+                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${statusClass(log.status)}`}>
+                      {log.status}
+                    </span>
+                  </td>
+                  <td className="px-3 py-4 text-sm text-slate-600">
+                    {log.syncedBy?.name || '—'}
+                  </td>
+                  <td className="px-3 py-4 text-sm text-slate-500">
+                    {new Date(log.createdAt).toLocaleDateString()}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
 
       {/* Summary Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
-        {[
-          { label: 'Completed Scans', value: '18', color: '#16a34a', bg: '#dcfce7' },
-          { label: 'Running Scans',   value: '3',  color: '#ca8a04', bg: '#fef9c3' },
-          { label: 'Failed Scans',    value: '2',  color: '#dc2626', bg: '#fef2f2' },
-        ].map(card => (
-          <div key={card.label} style={{
-            background: '#ffffff',
-            border: '1px solid #bfdbfe',
-            borderRadius: '12px',
-            padding: '20px',
-            boxShadow: '0 1px 4px rgba(59,130,246,0.07)',
-          }}>
-            <p style={{ color: '#64748b', fontSize: '13px', marginBottom: '8px' }}>{card.label}</p>
-            <p style={{ fontSize: '28px', fontWeight: 700, color: card.color }}>{card.value}</p>
-          </div>
-        ))}
+      <div className="grid grid-cols-3 gap-4">
+        <div className="bg-white border border-blue-200 rounded-xl p-5 shadow-sm">
+          <p className="text-slate-500 text-sm">Total Syncs</p>
+          <h2 className="text-3xl font-bold text-blue-700 mt-2">{logs.length}</h2>
+        </div>
+        <div className="bg-white border border-blue-200 rounded-xl p-5 shadow-sm">
+          <p className="text-slate-500 text-sm">Completed</p>
+          <h2 className="text-3xl font-bold text-green-600 mt-2">{completed}</h2>
+        </div>
+        <div className="bg-white border border-blue-200 rounded-xl p-5 shadow-sm">
+          <p className="text-slate-500 text-sm">Failed</p>
+          <h2 className="text-3xl font-bold text-red-500 mt-2">{failed}</h2>
+        </div>
       </div>
 
     </div>
