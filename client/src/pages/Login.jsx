@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 
 function Login() {
   const navigate = useNavigate()
@@ -7,20 +7,37 @@ function Login() {
   const [showPass, setShowPass] = useState(false)
   const [remember, setRemember] = useState(true)
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value })
     setError('')
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault()
     if (!form.email) return setError('Email is required')
     if (!form.password) return setError('Password is required')
-    if (form.email !== 'akshat@devsync.com' || form.password !== 'admin123') {
-      return setError('Invalid email or password')
+
+    setLoading(true)
+    try {
+      const res = await fetch('http://localhost:5000/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: form.email, password: form.password }),
+      })
+      const data = await res.json()
+
+      if (!res.ok) throw new Error(data.message || 'Invalid email or password')
+
+      localStorage.setItem('token', data.token)
+      localStorage.setItem('user', JSON.stringify(data.user))
+      navigate('/dashboard')
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
     }
-    navigate('/dashboard')
   }
 
   return (
@@ -36,7 +53,6 @@ function Login() {
         padding: '48px',
       }}>
 
-        {/* Heading */}
         <div>
           <h1 style={{ fontSize: '36px', fontWeight: 800, color: '#1e293b', lineHeight: 1.2, marginBottom: '16px' }}>
             Welcome Back to<br />
@@ -48,7 +64,6 @@ function Login() {
           </p>
         </div>
 
-        {/* Illustration */}
         <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '32px 0' }}>
           <img
             src="/yy.png"
@@ -57,7 +72,6 @@ function Login() {
           />
         </div>
 
-        {/* Bottom Feature Pills */}
         <div style={{
           background: 'rgba(255,255,255,0.7)',
           borderRadius: '16px',
@@ -93,7 +107,6 @@ function Login() {
       }}>
         <div style={{ width: '100%', maxWidth: '380px' }}>
 
-          {/* Logo */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
             <div style={{
               width: '48px', height: '48px',
@@ -111,10 +124,8 @@ function Login() {
             Sign in to your DevSync account 👋
           </p>
 
-          {/* Form */}
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
 
-            {/* Email */}
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                 <label style={{ fontSize: '14px', fontWeight: 600, color: '#1e293b' }}>Email</label>
@@ -148,7 +159,6 @@ function Login() {
               </div>
             </div>
 
-            {/* Password */}
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                 <label style={{ fontSize: '14px', fontWeight: 600, color: '#1e293b' }}>Password</label>
@@ -196,7 +206,6 @@ function Login() {
               </div>
             </div>
 
-            {/* Remember + Forgot */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
                 <input
@@ -212,7 +221,6 @@ function Login() {
               </span>
             </div>
 
-            {/* Error */}
             {error && (
               <div style={{
                 background: '#fef2f2', border: '1px solid #fecaca',
@@ -223,9 +231,9 @@ function Login() {
               </div>
             )}
 
-            {/* Sign In Button */}
             <button
               type="submit"
+              disabled={loading}
               style={{
                 background: '#3b82f6',
                 color: '#fff',
@@ -240,19 +248,26 @@ function Login() {
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '8px',
+                opacity: loading ? 0.7 : 1,
               }}
             >
-              → Sign In
+              {loading ? 'Signing In...' : '→ Sign In'}
             </button>
 
-            {/* Divider */}
+            {/* Don't have account → Register link */}
+            <p style={{ textAlign: 'center', fontSize: '13px', color: '#64748b' }}>
+              Don't have an account?{' '}
+              <Link to="/register" style={{ color: '#3b82f6', fontWeight: 600, textDecoration: 'none' }}>
+                Create one
+              </Link>
+            </p>
+
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <div style={{ flex: 1, height: '1px', background: '#e2e8f0' }} />
               <span style={{ fontSize: '12px', color: '#94a3b8' }}>or continue with</span>
               <div style={{ flex: 1, height: '1px', background: '#e2e8f0' }} />
             </div>
 
-            {/* OAuth Buttons */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
               {[
                 { label: 'GitHub', icon: '🐙' },
@@ -280,22 +295,6 @@ function Login() {
                   {btn.icon} {btn.label}
                 </button>
               ))}
-            </div>
-
-            {/* Demo Hint */}
-            <div style={{
-              background: '#eff6ff',
-              border: '1px solid #bfdbfe',
-              borderRadius: '10px',
-              padding: '11px 14px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-            }}>
-              <span style={{ fontSize: '14px' }}>ℹ️</span>
-              <span style={{ fontSize: '12px', color: '#3b82f6', fontWeight: 500 }}>
-                Demo: akshat@devsync.com / admin123
-              </span>
             </div>
 
           </form>
