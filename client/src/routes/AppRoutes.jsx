@@ -8,12 +8,14 @@ import Sync from '../pages/Sync'
 import Logs from '../pages/Logs'
 import Settings from '../pages/Settings'
 import Login from '../pages/Login'
+import Register from '../pages/Register'
 
 function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<AuthLayout />}>
-        <Route path="login" element={<Login />} />
+        <Route path="login"    element={<Login />} />
+        <Route path="register" element={<Register />} />
       </Route>
       <Route path="/" element={<MainLayout />}>
         <Route index element={<Navigate to="/dashboard" replace />} />
