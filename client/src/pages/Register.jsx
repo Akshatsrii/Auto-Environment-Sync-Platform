@@ -1,11 +1,10 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 
-function Login() {
+function Register() {
   const navigate = useNavigate()
-  const [form, setForm] = useState({ email: '', password: '' })
+  const [form, setForm] = useState({ name: '', email: '', password: '', confirmPassword: '' })
   const [showPass, setShowPass] = useState(false)
-  const [remember, setRemember] = useState(true)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -16,19 +15,31 @@ function Login() {
 
   async function handleSubmit(e) {
     e.preventDefault()
-    if (!form.email) return setError('Email is required')
-    if (!form.password) return setError('Password is required')
+
+    if (!form.name || !form.email || !form.password) {
+      return setError('All fields are required')
+    }
+    if (form.password.length < 6) {
+      return setError('Password must be at least 6 characters')
+    }
+    if (form.password !== form.confirmPassword) {
+      return setError('Passwords do not match')
+    }
 
     setLoading(true)
     try {
-      const res = await fetch('http://localhost:5000/api/auth/login', {
+      const res = await fetch('http://localhost:5000/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: form.email, password: form.password }),
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          password: form.password,
+        }),
       })
       const data = await res.json()
 
-      if (!res.ok) throw new Error(data.message || 'Invalid email or password')
+      if (!res.ok) throw new Error(data.message || 'Registration failed')
 
       localStorage.setItem('token', data.token)
       localStorage.setItem('user', JSON.stringify(data.user))
@@ -53,17 +64,19 @@ function Login() {
         padding: '48px',
       }}>
 
+        {/* Heading */}
         <div>
           <h1 style={{ fontSize: '36px', fontWeight: 800, color: '#1e293b', lineHeight: 1.2, marginBottom: '16px' }}>
-            Welcome Back to<br />
-            <span style={{ color: '#3b82f6' }}>DevSync.</span> 👋
+            Start Building with<br />
+            <span style={{ color: '#3b82f6' }}>DevSync.</span> 🚀
           </h1>
           <p style={{ color: '#64748b', fontSize: '15px', lineHeight: 1.6, maxWidth: '340px' }}>
-            Sign in to continue managing your projects,
-            tasks and collaborate with your team.
+            Create an account to sync environments,
+            track changes, and ship faster with your team.
           </p>
         </div>
 
+        {/* Illustration */}
         <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '32px 0' }}>
           <img
             src="/yy.png"
@@ -72,6 +85,7 @@ function Login() {
           />
         </div>
 
+        {/* Bottom Feature Pills */}
         <div style={{
           background: 'rgba(255,255,255,0.7)',
           borderRadius: '16px',
@@ -104,9 +118,11 @@ function Login() {
         alignItems: 'center',
         justifyContent: 'center',
         padding: '48px 40px',
+        overflowY: 'auto',
       }}>
         <div style={{ width: '100%', maxWidth: '380px' }}>
 
+          {/* Logo */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
             <div style={{
               width: '48px', height: '48px',
@@ -120,17 +136,51 @@ function Login() {
               Dev<span style={{ color: '#3b82f6' }}>Sync</span>
             </span>
           </div>
-          <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '32px' }}>
-            Sign in to your DevSync account 👋
+          <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '28px' }}>
+            Create your DevSync account 🎉
           </p>
 
-          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          {/* Form */}
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
 
+            {/* Name */}
             <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                <label style={{ fontSize: '14px', fontWeight: 600, color: '#1e293b' }}>Email</label>
-                <span style={{ fontSize: '16px', color: '#94a3b8' }}>✉</span>
+              <label style={{ fontSize: '14px', fontWeight: 600, color: '#1e293b', marginBottom: '8px', display: 'block' }}>
+                Full Name
+              </label>
+              <div style={{ position: 'relative' }}>
+                <span style={{
+                  position: 'absolute', left: '14px', top: '50%',
+                  transform: 'translateY(-50%)',
+                  fontSize: '14px', color: '#94a3b8',
+                }}>👤</span>
+                <input
+                  name="name"
+                  type="text"
+                  value={form.name}
+                  onChange={handleChange}
+                  placeholder="Akshat Srivastava"
+                  style={{
+                    width: '100%',
+                    background: '#f8fafc',
+                    border: '1.5px solid #e2e8f0',
+                    borderRadius: '10px',
+                    padding: '12px 14px 12px 40px',
+                    fontSize: '14px',
+                    color: '#1e293b',
+                    fontFamily: 'inherit',
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                  }}
+                />
               </div>
+            </div>
+
+            {/* Email */}
+            <div>
+              <label style={{ fontSize: '14px', fontWeight: 600, color: '#1e293b', marginBottom: '8px', display: 'block' }}>
+                Email
+              </label>
               <div style={{ position: 'relative' }}>
                 <span style={{
                   position: 'absolute', left: '14px', top: '50%',
@@ -159,11 +209,11 @@ function Login() {
               </div>
             </div>
 
+            {/* Password */}
             <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                <label style={{ fontSize: '14px', fontWeight: 600, color: '#1e293b' }}>Password</label>
-                <span style={{ fontSize: '16px', color: '#94a3b8' }}>🔒</span>
-              </div>
+              <label style={{ fontSize: '14px', fontWeight: 600, color: '#1e293b', marginBottom: '8px', display: 'block' }}>
+                Password
+              </label>
               <div style={{ position: 'relative' }}>
                 <span style={{
                   position: 'absolute', left: '14px', top: '50%',
@@ -206,21 +256,40 @@ function Login() {
               </div>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                <input
-                  type="checkbox"
-                  checked={remember}
-                  onChange={() => setRemember(!remember)}
-                  style={{ width: '16px', height: '16px', accentColor: '#3b82f6' }}
-                />
-                <span style={{ fontSize: '13px', color: '#475569' }}>Remember me</span>
+            {/* Confirm Password */}
+            <div>
+              <label style={{ fontSize: '14px', fontWeight: 600, color: '#1e293b', marginBottom: '8px', display: 'block' }}>
+                Confirm Password
               </label>
-              <span style={{ fontSize: '13px', color: '#3b82f6', fontWeight: 600, cursor: 'pointer' }}>
-                Forgot password?
-              </span>
+              <div style={{ position: 'relative' }}>
+                <span style={{
+                  position: 'absolute', left: '14px', top: '50%',
+                  transform: 'translateY(-50%)',
+                  fontSize: '14px', color: '#94a3b8',
+                }}>🔒</span>
+                <input
+                  name="confirmPassword"
+                  type={showPass ? 'text' : 'password'}
+                  value={form.confirmPassword}
+                  onChange={handleChange}
+                  placeholder="••••••••"
+                  style={{
+                    width: '100%',
+                    background: '#f8fafc',
+                    border: '1.5px solid #e2e8f0',
+                    borderRadius: '10px',
+                    padding: '12px 14px 12px 40px',
+                    fontSize: '14px',
+                    color: '#1e293b',
+                    fontFamily: 'inherit',
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                  }}
+                />
+              </div>
             </div>
 
+            {/* Error */}
             {error && (
               <div style={{
                 background: '#fef2f2', border: '1px solid #fecaca',
@@ -231,6 +300,7 @@ function Login() {
               </div>
             )}
 
+            {/* Sign Up Button */}
             <button
               type="submit"
               disabled={loading}
@@ -251,51 +321,16 @@ function Login() {
                 opacity: loading ? 0.7 : 1,
               }}
             >
-              {loading ? 'Signing In...' : '→ Sign In'}
+              {loading ? 'Creating Account...' : '→ Create Account'}
             </button>
 
-            {/* Don't have account → Register link */}
+            {/* Already have account */}
             <p style={{ textAlign: 'center', fontSize: '13px', color: '#64748b' }}>
-              Don't have an account?{' '}
-              <Link to="/register" style={{ color: '#3b82f6', fontWeight: 600, textDecoration: 'none' }}>
-                Create one
+              Already have an account?{' '}
+              <Link to="/login" style={{ color: '#3b82f6', fontWeight: 600, textDecoration: 'none' }}>
+                Sign In
               </Link>
             </p>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <div style={{ flex: 1, height: '1px', background: '#e2e8f0' }} />
-              <span style={{ fontSize: '12px', color: '#94a3b8' }}>or continue with</span>
-              <div style={{ flex: 1, height: '1px', background: '#e2e8f0' }} />
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-              {[
-                { label: 'GitHub', icon: '🐙' },
-                { label: 'Google', icon: '🔵' },
-              ].map(btn => (
-                <button
-                  key={btn.label}
-                  type="button"
-                  style={{
-                    background: '#ffffff',
-                    border: '1.5px solid #e2e8f0',
-                    borderRadius: '10px',
-                    padding: '11px',
-                    fontSize: '14px',
-                    fontWeight: 600,
-                    color: '#1e293b',
-                    cursor: 'pointer',
-                    fontFamily: 'inherit',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '8px',
-                  }}
-                >
-                  {btn.icon} {btn.label}
-                </button>
-              ))}
-            </div>
 
           </form>
         </div>
@@ -304,4 +339,4 @@ function Login() {
   )
 }
 
-export default Login
+export default Register
