@@ -6,6 +6,7 @@ const links = [
   { to: '/compare',      label: 'Compare' },
   { to: '/sync',         label: 'Sync' },
   { to: '/logs',         label: 'Logs' },
+  { to: '/versions',     label: 'Version History' },
   { to: '/settings',     label: 'Settings' },
 ]
 

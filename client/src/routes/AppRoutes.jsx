@@ -9,6 +9,7 @@ import Logs from '../pages/Logs'
 import Settings from '../pages/Settings'
 import Login from '../pages/Login'
 import Register from '../pages/Register'
+import VersionHistory from "../pages/VersionHistory";
 
 function AppRoutes() {
   return (
@@ -25,6 +26,7 @@ function AppRoutes() {
         <Route path="sync"         element={<Sync />} />
         <Route path="logs"         element={<Logs />} />
         <Route path="settings"     element={<Settings />} />
+      <Route path="versions/:envId" element={<VersionHistory />} />
       </Route>
     </Routes>
   )

@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from "react-router-dom";
 
 function Environments() {
+  const navigate = useNavigate();
   const services = ['Node.js', 'MongoDB', 'Redis', 'Docker']
   const files = ['Dockerfile', 'docker-compose.yml', '.env.example', 'README.md']
 
@@ -147,12 +149,23 @@ const handleDeleteEnvironment = async (id) => {
             <span className="text-xs font-semibold px-3 py-1 rounded-full bg-green-100 text-green-700">
   Active
 </span>
-<button
-  onClick={() => handleDeleteEnvironment(env._id)}
-  className="mt-3 bg-red-500 text-white px-3 py-1 rounded text-xs"
->
-  Delete
-</button>
+
+<div className="flex gap-2 mt-3">
+  <button
+    onClick={() => navigate(`/versions/${env._id}`)}
+    className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg transition"
+  >
+    {/* <History className="w-3 h-3" /> */}
+    History
+  </button>
+
+  <button
+    onClick={() => handleDeleteEnvironment(env._id)}
+    className="bg-red-500 text-white px-3 py-1 rounded text-xs"
+  >
+    Delete
+  </button>
+</div>
           </div>
         ))}
       </div>
