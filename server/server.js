@@ -20,6 +20,8 @@ app.use('/api/environments', require('./src/routes/environmentRoutes'))
 app.use('/api/sync', require('./src/routes/syncRoutes'))
 app.use('/api/logs', require('./src/routes/logRoutes'))
 app.use('/api/versions', require('./src/routes/versionRoutes'))
+app.use('/api/sync-requests', require('./src/routes/syncRequestRoutes'))
+
 
 // Health Check
 app.get('/', (req, res) => {
