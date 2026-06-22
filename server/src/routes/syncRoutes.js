@@ -1,7 +1,12 @@
 const express = require('express')
 const router = express.Router()
-const { previewSync, executeSync } = require('../controllers/syncController')
-const { protect } = require('../middleware/authMiddleware')
+
+const {
+  previewSync,
+  executeSync,
+} = require('../controllers/syncController')
+
+const protect = require('../middleware/authMiddleware')
 
 router.use(protect)
 

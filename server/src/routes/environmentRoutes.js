@@ -1,5 +1,6 @@
 const express = require('express')
 const router = express.Router()
+
 const {
   createEnvironment,
   getEnvironments,
@@ -7,13 +8,14 @@ const {
   deleteEnvironment,
   compareEnvironments,
 } = require('../controllers/environmentController')
-const { protect } = require('../middleware/authMiddleware')
+
+const protect = require('../middleware/authMiddleware')
 
 router.use(protect) // all routes protected
 
 router.post('/', createEnvironment)
 router.get('/', getEnvironments)
-router.get('/compare', compareEnvironments) // must come before '/:id'
+router.get('/compare', compareEnvironments)
 router.get('/:id', getEnvironmentById)
 router.delete('/:id', deleteEnvironment)
 
