@@ -1,14 +1,4 @@
-version: '3.8'
-
 services:
-  mongodb:
-    image: mongo:7
-    container_name: devsync-mongo
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongo-data:/data/db
-
   server:
     build: ./server
     container_name: devsync-server
@@ -16,8 +6,6 @@ services:
       - "5000:5000"
     env_file:
       - ./server/.env
-    depends_on:
-      - mongodb
 
   client:
     build: ./client
@@ -26,6 +14,3 @@ services:
       - "80:80"
     depends_on:
       - server
-
-volumes:
-  mongo-data:
