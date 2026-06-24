@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useToast } from '../context/ToastContext'
 
 function Sync() {
@@ -9,6 +9,7 @@ function Sync() {
   // Sync engine (new logic)
   const [sourceEnvId, setSourceEnvId] = useState('')
   const [targetEnvId, setTargetEnvId] = useState('')
+  const [environments, setEnvironments] = useState([])
   const [syncPlan, setSyncPlan] = useState(null)
   const [syncing, setSyncing] = useState(false)
   const [syncSuccess, setSyncSuccess] = useState(false)
@@ -18,6 +19,25 @@ function Sync() {
 
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000'
   const token = localStorage.getItem('token')
+
+  const fetchEnvironments = async () => {
+  try {
+    const res = await fetch(`${API_URL}/api/environments`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+
+    const data = await res.json()
+
+    setEnvironments(data.environments || [])
+  } catch (error) {
+    console.error('FETCH ENV ERROR =>', error)
+  }
+}
+useEffect(() => {
+  fetchEnvironments()
+}, [])
 
   const workflow = [
     { label: 'Repository Connected', color: 'bg-green-500' },
@@ -231,22 +251,33 @@ function Sync() {
         </h2>
 
         <div className="flex gap-4">
-          <input
-            type="text"
-            placeholder="Source Environment ID"
-            value={sourceEnvId}
-            onChange={(e) => setSourceEnvId(e.target.value)}
-            className="flex-1 bg-blue-50 border border-blue-200 rounded-lg px-4 py-2.5 text-sm text-slate-700 outline-none"
-          />
+          <select
+  value={sourceEnvId}
+  onChange={(e) => setSourceEnvId(e.target.value)}
+  className="flex-1 bg-blue-50 border border-blue-200 rounded-lg px-4 py-2.5 text-sm text-slate-700 outline-none"
+>
+  <option value="">Select Source Environment</option>
 
-          <input
-            type="text"
-            placeholder="Target Environment ID"
-            value={targetEnvId}
-            onChange={(e) => setTargetEnvId(e.target.value)}
-            className="flex-1 bg-blue-50 border border-blue-200 rounded-lg px-4 py-2.5 text-sm text-slate-700 outline-none"
-          />
+  {environments.map((env) => (
+    <option key={env._id} value={env._id}>
+      {env.name}
+    </option>
+  ))}
+</select>
 
+         <select
+  value={targetEnvId}
+  onChange={(e) => setTargetEnvId(e.target.value)}
+  className="flex-1 bg-blue-50 border border-blue-200 rounded-lg px-4 py-2.5 text-sm text-slate-700 outline-none"
+>
+  <option value="">Select Target Environment</option>
+
+  {environments.map((env) => (
+    <option key={env._id} value={env._id}>
+      {env.name}
+    </option>
+  ))}
+</select>
           <button
             onClick={handlePreview}
             className="bg-blue-600 text-white text-sm font-semibold px-5 py-2.5 rounded-lg cursor-pointer hover:bg-blue-700 transition"
