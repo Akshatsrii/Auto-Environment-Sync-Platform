@@ -1,16 +1,29 @@
-import Redis from "ioredis";
+const { createClient } = require('redis')
 
-const redis = new Redis({
-  host: "127.0.0.1",
-  port: 6379,
-});
+const redisClient = createClient({
+  url: process.env.REDIS_URL || 'redis://localhost:6379',
+  socket: {
+    reconnectStrategy: (retries) => {
+      if (retries > 10) {
+        console.error('Redis: too many retries, giving up')
+        return new Error('Redis retries exhausted')
+      }
+      return Math.min(retries * 100, 3000) // exponential backoff, capped
+    },
+  },
+})
 
-redis.on("connect", () => {
-  console.log("✅ Redis Connected");
-});
+redisClient.on('connect', () => console.log('Redis: connecting...'))
+redisClient.on('ready', () => console.log('Redis: connected & ready'))
+redisClient.on('error', (err) => console.error('Redis Error:', err.message))
+redisClient.on('end', () => console.log('Redis: connection closed'))
 
-redis.on("error", (err) => {
-  console.error("❌ Redis Error:", err);
-});
+async function connectRedis() {
+  try {
+    await redisClient.connect()
+  } catch (error) {
+    console.error('Redis connection failed:', error.message)
+  }
+}
 
-export default redis;
+module.exports = { redisClient, connectRedis }
