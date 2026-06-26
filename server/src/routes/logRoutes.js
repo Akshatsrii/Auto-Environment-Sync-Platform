@@ -6,7 +6,7 @@ const {
   getLogById,
 } = require('../controllers/logController')
 
-const protect = require('../middleware/authMiddleware')
+const { protect } = require('../middleware/authMiddleware')
 
 router.use(protect)
 

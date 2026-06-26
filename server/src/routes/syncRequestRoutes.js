@@ -8,13 +8,11 @@ const {
   rejectRequest,
 } = require("../controllers/syncRequestController");
 
-const protect = require("../middleware/authMiddleware");
+const { protect } = require("../middleware/authMiddleware");
 const authorizeRoles = require("../middleware/roleMiddleware");
 
-// Developer can create sync request
 router.post("/", protect, createSyncRequest);
 
-// Reviewer/Admin can see all requests
 router.get(
   "/",
   protect,
@@ -22,7 +20,6 @@ router.get(
   getAllRequests
 );
 
-// Reviewer/Admin can approve
 router.post(
   "/:requestId/approve",
   protect,
@@ -30,7 +27,6 @@ router.post(
   approveRequest
 );
 
-// Reviewer/Admin can reject
 router.post(
   "/:requestId/reject",
   protect,

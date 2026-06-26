@@ -9,9 +9,9 @@ const {
   compareEnvironments,
 } = require('../controllers/environmentController')
 
-const protect = require('../middleware/authMiddleware')
+const { protect } = require('../middleware/authMiddleware')
 
-router.use(protect) // all routes protected
+router.use(protect) // All routes protected
 
 router.post('/', createEnvironment)
 router.get('/', getEnvironments)
