@@ -8,7 +8,7 @@ const {
   rollbackToVersion,
 } = require("../controllers/versionController");
 
-const protect = require("../middleware/authMiddleware");
+const { protect } = require("../middleware/authMiddleware");
 
 // Get all versions of an environment
 router.get("/:environmentId", protect, getVersions);

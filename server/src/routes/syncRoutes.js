@@ -6,7 +6,7 @@ const {
   executeSync,
 } = require('../controllers/syncController')
 
-const protect = require('../middleware/authMiddleware')
+const { protect } = require('../middleware/authMiddleware')
 
 router.use(protect)
 
