@@ -30,18 +30,68 @@ function AppRoutes() {
       <Route path="/" element={<MainLayout />}>
         <Route index element={<Navigate to="/dashboard" replace />} />
 
-        <Route path="dashboard" element={<Dashboard />} />
-        <Route path="environments" element={<Environments />} />
-        <Route path="compare" element={<Compare />} />
-        <Route path="sync" element={<Sync />} />
-        <Route path="logs" element={<Logs />} />
-        <Route path="settings" element={<Settings />} />
+    <Route
+  path="dashboard"
+  element={
+    <ProtectedRoute>
+      <Dashboard />
+    </ProtectedRoute>
+  }
+/>
 
-        <Route
-          path="versions/:envId"
-          element={<VersionHistory />}
-        />
+<Route
+  path="environments"
+  element={
+    <ProtectedRoute>
+      <Environments />
+    </ProtectedRoute>
+  }
+/>
 
+<Route
+  path="compare"
+  element={
+    <ProtectedRoute>
+      <Compare />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="sync"
+  element={
+    <ProtectedRoute>
+      <Sync />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="logs"
+  element={
+    <ProtectedRoute>
+      <Logs />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="settings"
+  element={
+    <ProtectedRoute>
+      <Settings />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="versions"
+  element={
+    <ProtectedRoute>
+      <VersionHistory />
+    </ProtectedRoute>
+  }
+/>
         <Route
           path="approvals"
           element={

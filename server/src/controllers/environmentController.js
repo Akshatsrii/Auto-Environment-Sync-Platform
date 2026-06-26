@@ -16,6 +16,9 @@ const createEnvironment = async (req, res) => {
   try {
     const { name, description, variables } = req.body
 
+    console.log("REQ BODY =>", req.body)
+console.log("REQ USER =>", req.user)
+
     if (!name) {
       return res.status(400).json({ message: 'Environment name is required' })
     }

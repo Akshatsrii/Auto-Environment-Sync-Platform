@@ -1,4 +1,5 @@
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 
 const titles = {
   '/dashboard':    'Dashboard',
@@ -12,6 +13,14 @@ const titles = {
 function Navbar() {
   const { pathname } = useLocation()
   const title = titles[pathname] ?? 'DevSync'
+
+  const navigate = useNavigate()
+const { logout } = useAuth()
+
+const handleLogout = () => {
+  logout()
+  navigate('/login')
+}
 
   return (
     <header style={{
@@ -28,22 +37,50 @@ function Navbar() {
         {title}
       </span>
 
-      <div style={{
-        display: 'flex', alignItems: 'center', gap: '8px',
-        background: '#dbeafe',
-        padding: '6px 14px',
-        borderRadius: '20px',
-      }}>
-        <div style={{
-          width: '24px', height: '24px',
-          background: '#3b82f6',
-          borderRadius: '50%',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-        }}>
-          <span style={{ color: '#fff', fontSize: '10px', fontWeight: 700 }}>A</span>
-        </div>
-        <span style={{ color: '#1d4ed8', fontSize: '13px', fontWeight: 500 }}>Akshat</span>
-      </div>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+  <div style={{
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    background: '#dbeafe',
+    padding: '6px 14px',
+    borderRadius: '20px',
+  }}>
+    <div style={{
+      width: '24px',
+      height: '24px',
+      background: '#3b82f6',
+      borderRadius: '50%',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    }}>
+      <span style={{ color: '#fff', fontSize: '10px', fontWeight: 700 }}>
+        A
+      </span>
+    </div>
+
+    <span style={{ color: '#1d4ed8', fontSize: '13px', fontWeight: 500 }}>
+      Akshat
+    </span>
+  </div>
+
+  <button
+    onClick={handleLogout}
+    style={{
+      background: '#ef4444',
+      color: '#fff',
+      border: 'none',
+      borderRadius: '8px',
+      padding: '8px 14px',
+      cursor: 'pointer',
+      fontSize: '13px',
+      fontWeight: 600,
+    }}
+  >
+    Logout
+  </button>
+</div>
     </header>
   )
 }

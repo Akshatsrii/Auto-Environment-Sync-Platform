@@ -11,7 +11,7 @@ function Environments() {
   const [showModal, setShowModal]       = useState(false)
   const [envName, setEnvName]           = useState('')
   const [envVariables, setEnvVariables] = useState('')
-  const [envStatus, setEnvStatus]       = useState('Active')
+  const [envStatus, setEnvStatus] = useState('active')
 
   const fetchEnvironments = async () => {
   try {
@@ -93,6 +93,7 @@ const handleDeleteEnvironment = async (id) => {
         body: JSON.stringify({
           name: envName,
           description: `${envName} Environment`,
+          status: envStatus,
           variables: [
             {
               key: 'PORT',
@@ -300,8 +301,8 @@ const handleDeleteEnvironment = async (id) => {
                 onChange={(e) => setEnvStatus(e.target.value)}
                 className="px-3 py-2.5 border border-slate-300 rounded-lg text-sm outline-none"
               >
-                <option>Active</option>
-                <option>Warning</option>
+                <option value="active">Active</option>
+<option value="inactive">Inactive</option>
               </select>
             </div>
             <div className="flex gap-3">
