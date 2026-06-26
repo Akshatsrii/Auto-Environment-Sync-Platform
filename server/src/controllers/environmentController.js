@@ -1,6 +1,15 @@
 const mongoose = require('mongoose')
 const Environment = require('../models/Environment')
 const { compareVariables, summarize } = require('../utils/compareEnvironments')
+const { redisClient } = require('../config/redis')
+
+const CACHE_TTL = 300 // 5 minutes
+
+// Helper: invalidate cache on write operations
+async function invalidateEnvironmentCache(userId, envId = null) {
+  await redisClient.del(`environments:${userId}`)
+  if (envId) await redisClient.del(`environment:${envId}`)
+}
 
 // POST /api/environments
 const createEnvironment = async (req, res) => {
@@ -18,27 +27,45 @@ const createEnvironment = async (req, res) => {
       createdBy: req.user._id,
     })
 
+    await invalidateEnvironmentCache(req.user._id)
+
     res.status(201).json({ message: 'Environment created', environment })
   } catch (error) {
     res.status(500).json({ message: error.message })
   }
 }
 
-// GET /api/environments
+// GET /api/environments — cached
 const getEnvironments = async (req, res) => {
   try {
+    const cacheKey = `environments:${req.user._id}`
+
+    const cached = await redisClient.get(cacheKey)
+    if (cached) {
+      return res.json({ environments: JSON.parse(cached), cached: true })
+    }
+
     const environments = await Environment.find({ createdBy: req.user._id })
       .sort({ createdAt: -1 })
 
-    res.json({ environments })
+    await redisClient.setEx(cacheKey, CACHE_TTL, JSON.stringify(environments))
+
+    res.json({ environments, cached: false })
   } catch (error) {
     res.status(500).json({ message: error.message })
   }
 }
 
-// GET /api/environments/:id
+// GET /api/environments/:id — cached
 const getEnvironmentById = async (req, res) => {
   try {
+    const cacheKey = `environment:${req.params.id}`
+
+    const cached = await redisClient.get(cacheKey)
+    if (cached) {
+      return res.json({ environment: JSON.parse(cached), cached: true })
+    }
+
     const environment = await Environment.findOne({
       _id: req.params.id,
       createdBy: req.user._id,
@@ -48,13 +75,15 @@ const getEnvironmentById = async (req, res) => {
       return res.status(404).json({ message: 'Environment not found' })
     }
 
-    res.json({ environment })
+    await redisClient.setEx(cacheKey, CACHE_TTL, JSON.stringify(environment))
+
+    res.json({ environment, cached: false })
   } catch (error) {
     res.status(500).json({ message: error.message })
   }
 }
 
-// DELETE /api/environments/:id
+// DELETE /api/environments/:id — invalidate cache after delete
 const deleteEnvironment = async (req, res) => {
   try {
     const environment = await Environment.findOneAndDelete({
@@ -66,14 +95,13 @@ const deleteEnvironment = async (req, res) => {
       return res.status(404).json({ message: 'Environment not found' })
     }
 
-    res.json({ message: 'Environment deleted successfully' })
-} catch (error) {
-  console.log("DELETE ENV ERROR =>", error)
+    await invalidateEnvironmentCache(req.user._id, req.params.id)
 
-  res.status(500).json({
-    message: error.message,
-  })
-}
+    res.json({ message: 'Environment deleted successfully' })
+  } catch (error) {
+    console.log("DELETE ENV ERROR =>", error)
+    res.status(500).json({ message: error.message })
+  }
 }
 
 // GET /api/environments/compare?source=<id>&target=<id>
@@ -93,6 +121,12 @@ const compareEnvironments = async (req, res) => {
       return res.status(400).json({ message: 'Invalid environment ID' })
     }
 
+    const cacheKey = `compare:${source}:${target}`
+    const cached = await redisClient.get(cacheKey)
+    if (cached) {
+      return res.json({ ...JSON.parse(cached), cached: true })
+    }
+
     const [sourceEnv, targetEnv] = await Promise.all([
       Environment.findOne({ _id: source, createdBy: req.user._id }),
       Environment.findOne({ _id: target, createdBy: req.user._id }),
@@ -105,15 +139,26 @@ const compareEnvironments = async (req, res) => {
     const differences = compareVariables(sourceEnv.variables, targetEnv.variables)
     const summary = summarize(differences)
 
-    res.json({
+    const responseData = {
       source: { id: sourceEnv._id, name: sourceEnv.name },
       target: { id: targetEnv._id, name: targetEnv.name },
       differences,
       summary,
-    })
+    }
+
+    await redisClient.setEx(cacheKey, 120, JSON.stringify(responseData)) // 2 min TTL
+
+    res.json({ ...responseData, cached: false })
   } catch (error) {
     res.status(500).json({ message: error.message })
   }
 }
 
-module.exports = { createEnvironment, getEnvironments, getEnvironmentById, deleteEnvironment, compareEnvironments }
+module.exports = {
+  createEnvironment,
+  getEnvironments,
+  getEnvironmentById,
+  deleteEnvironment,
+  compareEnvironments,
+  invalidateEnvironmentCache,
+}
