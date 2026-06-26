@@ -42,6 +42,7 @@ app.use("/api/sync", require("./src/routes/syncRoutes"));
 app.use("/api/logs", require("./src/routes/logRoutes"));
 app.use("/api/versions", require("./src/routes/versionRoutes"));
 app.use("/api/sync-requests", require("./src/routes/syncRequestRoutes"));
+app.use('/api/sessions', require('./src/routes/sessionRoutes'))
 
 // Uncomment when compareRoutes.js exists
 // app.use("/api/compare", require("./src/routes/compareRoutes"));
