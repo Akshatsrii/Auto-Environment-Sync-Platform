@@ -2,6 +2,8 @@ const express = require('express')
 const cors = require('cors')
 const dotenv = require('dotenv')
 const connectDB = require('./src/config/db')
+const { connectRedis } = require('./src/config/redis')
+
 
 dotenv.config()
 
@@ -9,6 +11,8 @@ const app = express()
 
 // Connect Database
 connectDB()
+connectRedis()
+
 
 // CORS Config
 const corsOptions = {
