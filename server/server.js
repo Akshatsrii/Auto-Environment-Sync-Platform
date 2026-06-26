@@ -1,12 +1,4 @@
-const express = require("express");
-const cors = require("cors");
-const dotenv = require("dotenv");
-
-const connectDB = require("./src/config/db");
-const { connectRedis } = require("./src/config/redis");
-
-// Middleware
-const { ipLimiter } = require("./src/middleware/rateLimiter");
+git "./src/middleware/rateLimiter");
 
 // Routes
 const authRoutes = require("./src/routes/authRoutes");
