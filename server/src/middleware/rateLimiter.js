@@ -1,44 +1,51 @@
-const { rateLimit, ipKeyGenerator } = require('express-rate-limit')
+const { rateLimit } = require("express-rate-limit");
 
-// Global IP limiter
+// --------------------
+// Global IP Limiter
+// --------------------
 const ipLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 min
+  windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100,
   standardHeaders: true,
   legacyHeaders: false,
   message: {
-    message: 'Too many requests from this IP. Please try again later.',
+    success: false,
+    message: "Too many requests from this IP. Please try again later.",
   },
-})
+});
 
-// Auth limiter (login/register)
+// --------------------
+// Auth Limiter (Login / Register)
+// --------------------
 const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
+  windowMs: 15 * 60 * 1000, // 15 minutes
   max: 5,
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: (req) => ipKeyGenerator(req.ip),
+  keyGenerator: (req) => req.ip,
   message: {
-    message: 'Too many login attempts. Please try again after 15 minutes.',
+    success: false,
+    message: "Too many login attempts. Please try again after 15 minutes.",
   },
-})
+});
 
-// User limiter
+// --------------------
+// User Limiter
+// --------------------
 const userLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
   max: 20,
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: (req) => {
-    return req.user?._id?.toString() || ipKeyGenerator(req.ip)
-  },
+  keyGenerator: (req) => req.user?._id?.toString() || req.ip,
   message: {
-    message: 'Too many requests. Please slow down.',
+    success: false,
+    message: "Too many requests. Please slow down.",
   },
-})
+});
 
 module.exports = {
   ipLimiter,
   authLimiter,
   userLimiter,
-}
+};
