@@ -4,62 +4,85 @@ const dotenv = require("dotenv");
 
 const connectDB = require("./src/config/db");
 const { connectRedis } = require("./src/config/redis");
+
+// Middleware
 const { ipLimiter } = require("./src/middleware/rateLimiter");
+
+// Routes
+const authRoutes = require("./src/routes/authRoutes");
+const environmentRoutes = require("./src/routes/environmentRoutes");
+const syncRoutes = require("./src/routes/syncRoutes");
+const logRoutes = require("./src/routes/logRoutes");
+const versionRoutes = require("./src/routes/versionRoutes");
+const syncRequestRoutes = require("./src/routes/syncRequestRoutes");
+const sessionRoutes = require("./src/routes/sessionRoutes");
 
 dotenv.config();
 
 const app = express();
 
-// --------------------
-// Connect Database & Redis
-// --------------------
+// ------------------------
+// Database
+// ------------------------
 connectDB();
 connectRedis();
 
-// --------------------
+// ------------------------
 // CORS
-// --------------------
-const corsOptions = {
-  origin: process.env.CLIENT_URL || "http://localhost:5173",
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-};
+// ------------------------
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
-app.use(cors(corsOptions));
-
-// --------------------
-// Middleware
-// --------------------
+// ------------------------
+// Body Parser
+// ------------------------
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(ipLimiter);
+// ------------------------
+// Rate Limiter
+// Development ke liye comment rakho
+// ------------------------
+// app.use(ipLimiter);
 
-// --------------------
-// Health Check
-// --------------------
+// ------------------------
+// Debug Route
+// ------------------------
+app.post("/test-body", (req, res) => {
+  console.log(req.body);
+  res.json(req.body);
+});
+
+// ------------------------
+// Root
+// ------------------------
 app.get("/", (req, res) => {
-  res.status(200).json({
+  res.json({
     success: true,
-    message: "DevSync API Running",
+    message: "DevSync API Running 🚀",
   });
 });
 
-// --------------------
-// Routes
-// --------------------
-app.use("/api/auth", require("./src/routes/authRoutes"));
-app.use("/api/environments", require("./src/routes/environmentRoutes"));
-app.use("/api/sync", require("./src/routes/syncRoutes"));
-app.use("/api/logs", require("./src/routes/logRoutes"));
-app.use("/api/versions", require("./src/routes/versionRoutes"));
-app.use("/api/sync-requests", require("./src/routes/syncRequestRoutes"));
-app.use("/api/sessions", require("./src/routes/sessionRoutes"));
+// ------------------------
+// API Routes
+// ------------------------
+app.use("/api/auth", authRoutes);
+app.use("/api/environments", environmentRoutes);
+app.use("/api/sync", syncRoutes);
+app.use("/api/logs", logRoutes);
+app.use("/api/versions", versionRoutes);
+app.use("/api/sync-requests", syncRequestRoutes);
+app.use("/api/sessions", sessionRoutes);
 
-// --------------------
+// ------------------------
 // 404
-// --------------------
+// ------------------------
 app.use((req, res) => {
   res.status(404).json({
     success: false,
@@ -67,9 +90,9 @@ app.use((req, res) => {
   });
 });
 
-// --------------------
+// ------------------------
 // Error Handler
-// --------------------
+// ------------------------
 app.use((err, req, res, next) => {
   console.error(err);
 
@@ -79,22 +102,11 @@ app.use((err, req, res, next) => {
   });
 });
 
-// --------------------
-// Start Server
-// --------------------
+// ------------------------
+// Server
+// ------------------------
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
-});
-
-// --------------------
-// Process Handlers
-// --------------------
-process.on("unhandledRejection", (err) => {
-  console.error("Unhandled Rejection:", err);
-});
-
-process.on("uncaughtException", (err) => {
-  console.error("Uncaught Exception:", err);
 });
