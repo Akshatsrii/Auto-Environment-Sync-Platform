@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken')
 const User = require('../models/User')
+const { redisClient } = require('../config/redis')
 
 const generateToken = (user) => {
   return jwt.sign(
@@ -12,6 +13,14 @@ const generateToken = (user) => {
     {
       expiresIn: process.env.JWT_EXPIRE || '7d',
     }
+  )
+}
+
+const generateRefreshToken = (user) => {
+  return jwt.sign(
+    { id: user._id },
+    process.env.JWT_REFRESH_SECRET,
+    { expiresIn: '30d' }
   )
 }
 
@@ -49,8 +58,10 @@ const register = async (req, res) => {
         role: user.role,
       },
       token: generateToken(user),
+      refreshToken: generateRefreshToken(user),
     })
   } catch (error) {
+    console.log("REGISTER ERROR:", error)
     res.status(500).json({
       message: error.message,
     })
@@ -93,8 +104,10 @@ const login = async (req, res) => {
         role: user.role,
       },
       token: generateToken(user),
+      refreshToken: generateRefreshToken(user),
     })
   } catch (error) {
+    console.log("LOGIN ERROR:", error)
     res.status(500).json({
       message: error.message,
     })
@@ -108,16 +121,59 @@ const getMe = async (req, res) => {
       user: req.user,
     })
   } catch (error) {
-  console.log("REGISTER ERROR:", error);
-
-  res.status(500).json({
-    message: error.message,
-  });
+    console.log("GET ME ERROR:", error)
+    res.status(500).json({
+      message: error.message,
+    })
+  }
 }
+
+// POST /api/auth/logout
+const logout = async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1]
+    if (!token) return res.status(400).json({ message: 'No token provided' })
+
+    const decoded = jwt.decode(token)
+    const expiresIn = decoded.exp - Math.floor(Date.now() / 1000)
+
+    if (expiresIn > 0) {
+      // Blacklist token until its natural expiry
+      await redisClient.setEx(`blacklist:${token}`, expiresIn, 'true')
+    }
+
+    res.json({ message: 'Logged out successfully' })
+  } catch (error) {
+    console.log("LOGOUT ERROR:", error)
+    res.status(500).json({ message: error.message })
+  }
+}
+
+// POST /api/auth/refresh
+const refreshToken = async (req, res) => {
+  try {
+    const { refreshToken } = req.body
+    if (!refreshToken) return res.status(401).json({ message: 'Refresh token required' })
+
+    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET)
+    const user = await User.findById(decoded.id)
+
+    if (!user) {
+      return res.status(401).json({ message: 'User not found' })
+    }
+
+    const newAccessToken = generateToken(user)
+
+    res.json({ token: newAccessToken })
+  } catch (error) {
+    res.status(401).json({ message: 'Invalid or expired refresh token' })
+  }
 }
 
 module.exports = {
   register,
   login,
   getMe,
+  logout,
+  refreshToken,
 }
