@@ -19,7 +19,7 @@ function Environments() {
     console.log("TOKEN =>", token)
 
     const res = await fetch(
-      'http://localhost:5000/api/environments',
+      'http://localhost:4000/api/environments',
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -54,7 +54,7 @@ const handleDeleteEnvironment = async (id) => {
     const token = localStorage.getItem('token')
 
     const res = await fetch(
-      `http://localhost:5000/api/environments/${id}`,
+      `http://localhost:4000/api/environments/${id}`,
       {
         method: 'DELETE',
         headers: {
@@ -83,7 +83,7 @@ const handleDeleteEnvironment = async (id) => {
     const token = localStorage.getItem('token')
 
     const res = await fetch(
-      'http://localhost:5000/api/environments',
+      'http://localhost:4000/api/environments',
       {
         method: 'POST',
         headers: {

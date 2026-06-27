@@ -2,6 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 
+dotenv.config();
+
 const connectDB = require("./src/config/db");
 const { connectRedis } = require("./src/config/redis");
 
@@ -17,51 +19,20 @@ const versionRoutes = require("./src/routes/versionRoutes");
 const syncRequestRoutes = require("./src/routes/syncRequestRoutes");
 const sessionRoutes = require("./src/routes/sessionRoutes");
 
-dotenv.config();
-
 const app = express();
 
-// ------------------------
-// Database
-// ------------------------
-connectDB();
-connectRedis();
+// Middleware
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true,
+}));
 
-// ------------------------
-// CORS
-// ------------------------
-app.use(
-  cors({
-    origin: "http://localhost:5173",
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
-
-// ------------------------
-// Body Parser
-// ------------------------
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// ------------------------
-// Rate Limiter
-// Development ke liye comment rakho
-// ------------------------
 // app.use(ipLimiter);
 
-// ------------------------
-// Debug Route
-// ------------------------
-app.post("/test-body", (req, res) => {
-  console.log(req.body);
-  res.json(req.body);
-});
-
-// ------------------------
-// Root
-// ------------------------
+// Routes
 app.get("/", (req, res) => {
   res.json({
     success: true,
@@ -69,9 +40,10 @@ app.get("/", (req, res) => {
   });
 });
 
-// ------------------------
-// API Routes
-// ------------------------
+app.post("/test-body", (req, res) => {
+  res.json(req.body);
+});
+
 app.use("/api/auth", authRoutes);
 app.use("/api/environments", environmentRoutes);
 app.use("/api/sync", syncRoutes);
@@ -80,9 +52,7 @@ app.use("/api/versions", versionRoutes);
 app.use("/api/sync-requests", syncRequestRoutes);
 app.use("/api/sessions", sessionRoutes);
 
-// ------------------------
 // 404
-// ------------------------
 app.use((req, res) => {
   res.status(404).json({
     success: false,
@@ -90,9 +60,7 @@ app.use((req, res) => {
   });
 });
 
-// ------------------------
-// Error Handler
-// ------------------------
+// Error handler
 app.use((err, req, res, next) => {
   console.error(err);
 
@@ -102,11 +70,21 @@ app.use((err, req, res, next) => {
   });
 });
 
-// ------------------------
-// Server
-// ------------------------
-const PORT = process.env.PORT || 5000;
+// Start Server
+const PORT = process.env.PORT || 4000;
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-});
+async function startServer() {
+  try {
+    await connectDB();
+    await connectRedis();
+
+    app.listen(PORT, "0.0.0.0", () => {
+      console.log(`🚀 Server running on http://localhost:${PORT}`);
+    });
+  } catch (err) {
+    console.error("Server Startup Error:", err);
+    process.exit(1);
+  }
+}
+
+startServer();

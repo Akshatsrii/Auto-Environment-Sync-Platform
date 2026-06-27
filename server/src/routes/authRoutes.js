@@ -1,5 +1,5 @@
-const express = require('express')
-const router = express.Router()
+const express = require("express");
+const router = express.Router();
 
 const {
   register,
@@ -7,15 +7,18 @@ const {
   logout,
   refreshToken,
   getMe,
-} = require('../controllers/authController')
+} = require("../controllers/authController");
 
-const { protect } = require('../middleware/authMiddleware')
-const { authLimiter } = require('../middleware/rateLimiter')
+const { protect } = require("../middleware/authMiddleware");
 
-router.post('/register', authLimiter, register)
-router.post('/login', authLimiter, login)
-router.post('/logout', protect, logout)
-router.post('/refresh', refreshToken)
-router.get('/me', protect, getMe)
+// const { authLimiter } = require("../middleware/rateLimiter");
 
-module.exports = router
+// Development
+router.post("/register", register);
+router.post("/login", login);
+
+router.post("/logout", protect, logout);
+router.post("/refresh", refreshToken);
+router.get("/me", protect, getMe);
+
+module.exports = router;
