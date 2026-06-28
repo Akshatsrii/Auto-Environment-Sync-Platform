@@ -11,11 +11,11 @@ const {
 
 const { protect } = require("../middleware/authMiddleware");
 
-// const { authLimiter } = require("../middleware/rateLimiter");
+const { authLimiter } = require("../middleware/rateLimiter");
 
 // Development
-router.post("/register", register);
-router.post("/login", login);
+router.post("/register", authLimiter, register);
+router.post("/login", authLimiter, login);
 
 router.post("/logout", protect, logout);
 router.post("/refresh", refreshToken);

@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken')
 const User = require('../models/User')
 const { redisClient } = require('../config/redis')
+const { createSession } = require("../controllers/sessionController");
 
 const generateToken = (user) => {
   return jwt.sign(
@@ -95,6 +96,9 @@ const login = async (req, res) => {
       })
     }
 
+     const token = generateToken(user);
+await createSession(user._id, token, req);
+
     res.status(200).json({
       message: 'Login successful',
       user: {
@@ -103,7 +107,7 @@ const login = async (req, res) => {
         email: user.email,
         role: user.role,
       },
-      token: generateToken(user),
+      token,
       refreshToken: generateRefreshToken(user),
     })
   } catch (error) {

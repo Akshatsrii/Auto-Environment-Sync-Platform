@@ -10,9 +10,10 @@ const {
 } = require('../controllers/environmentController')
 
 const { protect } = require('../middleware/authMiddleware')
+const { userLimiter } = require("../middleware/rateLimiter");
 
 router.use(protect) // All routes protected
-
+router.use(userLimiter)
 router.post('/', createEnvironment)
 router.get('/', getEnvironments)
 router.get('/compare', compareEnvironments)

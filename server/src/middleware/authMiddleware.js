@@ -29,17 +29,22 @@ const protect = async (req, res, next) => {
     }
 
     // Verify JWT
+    console.log("TOKEN:", token);
+console.log("JWT_SECRET:", process.env.JWT_SECRET);
     const decoded = jwt.verify(token, process.env.JWT_SECRET)
+    console.log("DECODED:", decoded);
 
     // Get user
     req.user = await User.findById(decoded.id).select('-password')
     req.token = token
 next();
-  } catch (error) {
-    return res.status(401).json({
-      message: 'Not authorized, token failed',
-    })
-  }
+ } catch (error) {
+  console.log("JWT ERROR:", error);
+
+  return res.status(401).json({
+    message: "Not authorized, token failed",
+  });
+}
 }
 
 module.exports = {

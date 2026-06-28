@@ -14,17 +14,29 @@ export const AuthProvider = ({ children }) => {
     setUser(userData);
   };
 
-  const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    setUser(null);
-  };
+  const logout = async () => {
+  const token = localStorage.getItem("token");
 
-  return (
-    <AuthContext.Provider value={{ user, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  try {
+    await fetch("http://localhost:5000/api/auth/logout", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  } catch (err) {
+    console.error(err);
+  }
+
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  setUser(null);
 };
 
+return (
+  <AuthContext.Provider value={{ user, login, logout }}>
+    {children}
+  </AuthContext.Provider>
+);
+};
 export const useAuth = () => useContext(AuthContext);

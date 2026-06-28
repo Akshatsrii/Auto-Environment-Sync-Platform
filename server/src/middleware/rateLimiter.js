@@ -1,13 +1,24 @@
 const { rateLimit } = require("express-rate-limit");
+const { redisClient } = require("../config/redis");
 
 // --------------------
 // Global IP Limiter
 // --------------------
 const ipLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100,
+  max: 5,
   standardHeaders: true,
   legacyHeaders: false,
+
+  handler: (req, res) => {
+  console.log("🚫 Rate Limit Hit:", req.ip);
+
+  res.status(429).json({
+    success: false,
+    message: "Too many requests from this IP. Please try again later.",
+  });
+},
+
   message: {
     success: false,
     message: "Too many requests from this IP. Please try again later.",

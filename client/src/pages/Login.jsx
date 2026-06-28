@@ -21,7 +21,7 @@ function Login() {
 
     setLoading(true)
     try {
-      const res = await fetch('http://localhost:4000/api/auth/login', {
+      const res = await fetch('http://localhost:5000/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: form.email, password: form.password }),
@@ -32,6 +32,7 @@ function Login() {
 
       localStorage.setItem('token', data.token)
       localStorage.setItem('user', JSON.stringify(data.user))
+      localStorage.setItem("refreshToken", data.refreshToken);
       navigate('/dashboard')
     } catch (err) {
       setError(err.message)
