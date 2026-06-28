@@ -18,6 +18,11 @@ const logRoutes = require("./src/routes/logRoutes");
 const versionRoutes = require("./src/routes/versionRoutes");
 const syncRequestRoutes = require("./src/routes/syncRequestRoutes");
 const sessionRoutes = require("./src/routes/sessionRoutes");
+const { startDriftScheduler } = require("./src/scheduler/driftScheduler");
+
+// Worker
+require("./src/workers/syncWorker");
+require("./src/workers/driftWorker");
 
 const app = express();
 
@@ -51,6 +56,7 @@ app.use("/api/logs", logRoutes);
 app.use("/api/versions", versionRoutes);
 app.use("/api/sync-requests", syncRequestRoutes);
 app.use("/api/sessions", sessionRoutes);
+ 
 
 // 404
 app.use((req, res) => {
@@ -77,6 +83,7 @@ async function startServer() {
   try {
     await connectDB();
     await connectRedis();
+    startDriftScheduler();
 
     app.listen(PORT, "0.0.0.0", () => {
       console.log(`🚀 Server running on http://localhost:${PORT}`);

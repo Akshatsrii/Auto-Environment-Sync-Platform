@@ -22,6 +22,24 @@ const environmentSchema = new mongoose.Schema({
     enum: ['active', 'inactive'],
     default: 'active',
   },
+  isActive: {
+  type: Boolean,
+  default: true,
+},
+
+lastSynced: {
+  type: Date,
+},
+
+lastDriftCheck: {
+  type: Date,
+},
+
+driftStatus: {
+  type: String,
+  enum: ["synced", "drifted"],
+  default: "synced",
+},
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
