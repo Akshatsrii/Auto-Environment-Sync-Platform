@@ -15,7 +15,7 @@ function Logs() {
     setLoading(true)
     setError('')
     try {
-      const res = await fetch('http://localhost:5000/api/logs', {
+      const res = await fetch('http://localhost:4000/api/logs', {
         headers: { Authorization: `Bearer ${token}` },
       })
       const data = await res.json()
