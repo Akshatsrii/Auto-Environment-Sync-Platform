@@ -1,5 +1,5 @@
 const { Worker } = require('bullmq');
-const { connection } = require('../config/queue');
+const { connection, deadLetterQueue } = require('../config/queue');
 const Environment = require('../models/Environment');
 
 const syncWorker = new Worker('environment-sync', async (job) => {
@@ -26,14 +26,40 @@ const syncWorker = new Worker('environment-sync', async (job) => {
 
   return { success: true, environmentId, syncedAt: new Date() };
 
-}, { connection });
+}, {
+  connection,
+  settings: {
+    stalledInterval: 30000,
+  },
+});
 
 syncWorker.on('completed', (job, result) => {
   console.log(`✅ Job ${job.id} completed:`, result);
 });
 
-syncWorker.on('failed', (job, err) => {
-  console.error(`❌ Job ${job.id} failed:`, err.message);
+syncWorker.on('failed', async (job, err) => {
+  console.log("========== FAILED EVENT ==========");
+  console.log("Job ID:", job.id);
+  console.log("Attempts Made:", job.attemptsMade);
+  console.log("Max Attempts:", job.opts.attempts);
+  console.error("Error:", err.message);
+
+  if (job.attemptsMade >= job.opts.attempts) {
+    console.log(`[DLQ] Moving job ${job.id} to Dead Letter Queue`);
+
+    await deadLetterQueue.add('dead-job', {
+      originalJobId: job.id,
+      originalQueue: 'environment-sync',
+      jobData: job.data,
+      error: err.message,
+      failedAt: new Date(),
+      attempts: job.attemptsMade,
+    });
+
+    console.log("✅ Job added to Dead Letter Queue");
+  } else {
+    console.log("⏳ Job will retry, not moving to DLQ yet");
+  }
 });
 
 module.exports = syncWorker;

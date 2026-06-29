@@ -19,6 +19,9 @@ const versionRoutes = require("./src/routes/versionRoutes");
 const syncRequestRoutes = require("./src/routes/syncRequestRoutes");
 const sessionRoutes = require("./src/routes/sessionRoutes");
 const { startDriftScheduler } = require("./src/scheduler/driftScheduler");
+const jobsRoutes = require("./src/routes/jobsRoutes");
+const { serverAdapter } = require("./src/config/bullBoard");
+const dashboardRoutes = require("./src/routes/dashboardRoutes");
 
 // Worker
 require("./src/workers/syncWorker");
@@ -34,6 +37,23 @@ app.use(cors({
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Bull Board Admin Dashboard
+app.use(
+  "/admin/queues",
+  (req, res, next) => {
+    const token = req.headers["x-admin-token"];
+
+    if (token !== process.env.ADMIN_TOKEN) {
+      return res.status(401).json({
+        error: "Unauthorized",
+      });
+    }
+
+    next();
+  },
+  serverAdapter.getRouter()
+);
 
 // app.use(ipLimiter);
 
@@ -56,6 +76,8 @@ app.use("/api/logs", logRoutes);
 app.use("/api/versions", versionRoutes);
 app.use("/api/sync-requests", syncRequestRoutes);
 app.use("/api/sessions", sessionRoutes);
+app.use("/api/jobs", jobsRoutes);
+app.use("/api/dashboard", dashboardRoutes);
  
 
 // 404
