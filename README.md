@@ -282,7 +282,7 @@ sequenceDiagram
     API->>GH: Exchange code → access_token
     GH-->>API: Return access_token + scopes
     API->>DB: Upsert user record
-    DB-->>API: Return user object
+    DB-->>API: Return user object's
     API-->>UI: Return JWT + user profile
     UI->>UI: Store JWT in memory (secure)
     UI-->>User: ✅ Redirect to Dashboard
