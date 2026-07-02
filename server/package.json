@@ -15,6 +15,8 @@
     "@bull-board/api": "^8.0.1",
     "@bull-board/express": "^8.0.1",
     "@bull-board/ui": "^8.0.1",
+    "@slack/webhook": "^7.1.0",
+    "axios": "^1.18.1",
     "bcryptjs": "^3.0.3",
     "bullmq": "^5.79.2",
     "cors": "^2.8.6",
@@ -27,9 +29,10 @@
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.7.0",
     "node-cron": "^4.5.0",
-    "nodemailer": "^9.0.1",
+    "nodemailer": "^9.0.3",
     "rate-limit-redis": "^4.3.1",
-    "redis": "^5.12.1"
+    "redis": "^5.12.1",
+    "socket.io": "^4.8.3"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"
