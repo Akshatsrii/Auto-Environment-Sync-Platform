@@ -2,6 +2,9 @@ const Environment = require('../models/Environment')
 const SyncLog = require('../models/SyncLog')
 const { compareEnvironments, generateSyncPlan } = require('../utils/diffEngine')
 const { sendSyncSuccessEmail } = require('../utils/emailService')
+const { sendNotification } = require('../utils/notificationService')
+const { sendSlackNotification } = require('../utils/slackService')
+const { sendTeamsNotification } = require('../utils/teamsService')
 
 // POST /api/sync/preview
 const previewSync = async (req, res) => {
@@ -137,15 +140,51 @@ const executeSync = async (req, res) => {
       status: 'success',
     })
 
-    // Send success email (non-blocking)
+    // Real-time notification (Socket.IO)
+    await sendNotification(req.user._id, {
+      title: 'Sync Completed',
+      message: `${syncPlan.length} change(s) synced from ${sourceEnv.name} → ${targetEnv.name}`,
+      type: 'sync',
+      meta: {
+        syncLogId: syncLog._id,
+        sourceEnv: sourceEnv.name,
+        targetEnv: targetEnv.name,
+      },
+    })
+
+    // Email notification (non-blocking)
     sendSyncSuccessEmail(req.user.email, {
       userName: req.user.name,
       sourceEnv: sourceEnv.name,
       targetEnv: targetEnv.name,
       changesCount: syncPlan.length,
-    }).catch(err => {
-      console.error('Email failed:', err.message)
-    })
+    }).catch(err => console.error('Email failed:', err.message))
+
+    // Slack notification (non-blocking)
+    sendSlackNotification({
+      title: 'Sync Completed ✓',
+      message: `Environment sync successful on DevSync`,
+      type: 'sync',
+      fields: [
+        { label: 'Source',   value: sourceEnv.name },
+        { label: 'Target',   value: targetEnv.name },
+        { label: 'Changes',  value: `${syncPlan.length}` },
+        { label: 'By',       value: req.user.name },
+      ],
+    }).catch(err => console.error('Slack failed:', err.message))
+
+    // Teams notification (non-blocking)
+    sendTeamsNotification({
+      title: 'Sync Completed',
+      message: `${syncPlan.length} change(s) synced successfully`,
+      type: 'sync',
+      facts: [
+        { label: 'Source',   value: sourceEnv.name },
+        { label: 'Target',   value: targetEnv.name },
+        { label: 'Changes',  value: `${syncPlan.length}` },
+        { label: 'By',       value: req.user.name },
+      ],
+    }).catch(err => console.error('Teams failed:', err.message))
 
     res.json({
       message: `Synced ${syncPlan.length} change(s) from ${sourceEnv.name} to ${targetEnv.name}`,
