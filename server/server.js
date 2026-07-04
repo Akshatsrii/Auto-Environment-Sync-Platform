@@ -33,6 +33,7 @@ const { serverAdapter } = require("./src/config/bullBoard");
 // Workers
 require("./src/workers/syncWorker");
 require("./src/workers/driftWorker");
+require("./src/workers/notificationWorker");
 
 const app = express();
 const server = http.createServer(app);
@@ -45,7 +46,7 @@ app.use(
   cors({
     origin:
       process.env.NODE_ENV === "production"
-        ? process.env.CLIENT_URL
+        ? process.env.CLIENT_URL || "http://localhost:5173"
         : "http://localhost:5173",
     credentials: true,
   })
@@ -55,7 +56,9 @@ app.use(express.json({ limit: "1mb" }));
 app.use(express.urlencoded({ extended: true }));
 
 // Rate Limiter
-app.use(ipLimiter);
+if (process.env.NODE_ENV === "production") {
+  app.use(ipLimiter);
+}
 
 // Bull Board Admin Dashboard
 app.use(

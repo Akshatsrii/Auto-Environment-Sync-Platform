@@ -1,6 +1,7 @@
 const SyncRequest = require("../models/SyncRequest");
 const Environment = require("../models/Environment");
 const Version = require("../models/Version");
+const { addNotificationJob } = require("../queues/notificationQueue");
 
 // Sync request create karo
 const createSyncRequest = async (req, res) => {
@@ -115,6 +116,21 @@ const approveRequest = async (req, res) => {
     request.reviewNote = reviewNote || "";
     await request.save();
 
+    // Queue Notification
+    await addNotificationJob({
+      userId: request.requestedBy,
+      type: 'sync',
+      title: 'Sync Request Approved',
+      message: `Your sync request from ${request.sourceEnvironment.name} to ${request.targetEnvironment.name} has been approved and executed.`,
+      meta: {
+        requestId: request._id.toString(),
+        sourceEnv: request.sourceEnvironment.name,
+        targetEnv: request.targetEnvironment.name,
+        status: 'approved',
+        reviewerName: req.user.name
+      }
+    }).catch(err => console.error('Failed to queue approval notification:', err.message));
+
     res.status(200).json({ success: true, message: "Sync approved and executed" });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -127,7 +143,9 @@ const rejectRequest = async (req, res) => {
     const { requestId } = req.params;
     const { reviewNote } = req.body;
 
-    const request = await SyncRequest.findById(requestId);
+    const request = await SyncRequest.findById(requestId)
+      .populate("sourceEnvironment")
+      .populate("targetEnvironment");
     if (!request) {
       return res.status(404).json({ success: false, message: "Request not found" });
     }
@@ -136,6 +154,22 @@ const rejectRequest = async (req, res) => {
     request.reviewedBy = req.user.id;
     request.reviewNote = reviewNote || "No reason provided";
     await request.save();
+
+    // Queue Notification
+    await addNotificationJob({
+      userId: request.requestedBy,
+      type: 'error',
+      title: 'Sync Request Rejected',
+      message: `Your sync request from ${request.sourceEnvironment?.name || 'Source'} to ${request.targetEnvironment?.name || 'Target'} was rejected. Note: ${request.reviewNote}`,
+      meta: {
+        requestId: request._id.toString(),
+        sourceEnv: request.sourceEnvironment?.name || 'Source',
+        targetEnv: request.targetEnvironment?.name || 'Target',
+        status: 'rejected',
+        reviewerName: req.user.name,
+        reviewNote: request.reviewNote
+      }
+    }).catch(err => console.error('Failed to queue rejection notification:', err.message));
 
     res.status(200).json({ success: true, message: "Request rejected" });
   } catch (error) {

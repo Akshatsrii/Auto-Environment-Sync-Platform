@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 
 function Register() {
   const navigate = useNavigate()
+  const { login } = useAuth()
   const [form, setForm] = useState({ name: '', email: '', password: '', confirmPassword: '' })
   const [showPass, setShowPass] = useState(false)
   const [error, setError] = useState('')
@@ -41,8 +43,7 @@ function Register() {
 
       if (!res.ok) throw new Error(data.message || 'Registration failed')
 
-      localStorage.setItem('token', data.token)
-      localStorage.setItem('user', JSON.stringify(data.user))
+      login(data.user, data.token)
       navigate('/dashboard')
     } catch (err) {
       setError(err.message)

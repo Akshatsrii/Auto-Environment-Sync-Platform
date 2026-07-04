@@ -57,6 +57,7 @@ const register = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        notificationSettings: user.notificationSettings,
       },
       token: generateToken(user),
       refreshToken: generateRefreshToken(user),
@@ -106,6 +107,7 @@ await createSession(user._id, token, req);
         name: user.name,
         email: user.email,
         role: user.role,
+        notificationSettings: user.notificationSettings,
       },
       token,
       refreshToken: generateRefreshToken(user),
@@ -122,7 +124,13 @@ await createSession(user._id, token, req);
 const getMe = async (req, res) => {
   try {
     res.status(200).json({
-      user: req.user,
+      user: {
+        id: req.user._id,
+        name: req.user.name,
+        email: req.user.email,
+        role: req.user.role,
+        notificationSettings: req.user.notificationSettings,
+      },
     })
   } catch (error) {
     console.log("GET ME ERROR:", error)
@@ -174,10 +182,41 @@ const refreshToken = async (req, res) => {
   }
 }
 
+// PATCH /api/auth/settings
+const updateSettings = async (req, res) => {
+  try {
+    const { notificationSettings } = req.body
+    const user = await User.findById(req.user._id)
+    if (!user) return res.status(404).json({ message: 'User not found' })
+
+    if (notificationSettings) {
+      user.notificationSettings = {
+        ...user.notificationSettings,
+        ...notificationSettings,
+      }
+    }
+
+    await user.save()
+    res.json({
+      message: 'Settings updated successfully',
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        notificationSettings: user.notificationSettings,
+      },
+    })
+  } catch (error) {
+    res.status(500).json({ message: error.message })
+  }
+}
+
 module.exports = {
   register,
   login,
   getMe,
   logout,
   refreshToken,
+  updateSettings,
 }

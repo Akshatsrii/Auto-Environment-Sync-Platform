@@ -1,0 +1,130 @@
+[33m424cb8b[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mAkshatsrii-patch-1[m[33m)[m Complete the phase 13
+[33m8b26501[m[33m ([m[1;31morigin/Akshatsrii-patch-1[m[33m)[m Integrate email notification delivery service
+[33m6d601c2[m Enable live notification updates using WebSocket events
+[33m8567a7e[m Implement notification center user interface
+[33m46deea2[m Integrate notification events with synchronization workflow
+[33m69778d0[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Merge pull request #14 from Akshatsrii/Akshatsrii-patch-1
+[33medf7fda[m Develop notification service layer
+[33ma6b143a[m Implement notification data model and storage
+[33m37c928a[m Create notification schema for persistent user notifications
+[33ma2dc851[m Create notification schema for persistent user notifications
+[33m4fcf41f[m Initialize Socket.IO infrastructure for real-time notifications
+[33m447856e[m Implement notification data model and storage
+[33m5d42413[m Create notification schema for persistent user notifications
+[33m8e34f64[m Create notification schema for persistent user notifications
+[33m900ef3f[m Initialize Socket.IO infrastructure for real-time notifications
+[33m7604660[m Fix grammar in user object return description
+[33ma8bba79[m Complete Phase 12
+[33mcabd6a0[m Complete Phase 12 Day 49 queue monitoring dashboard
+[33mf14b305[m Complete Phase 12 Day 45-47 background jobs
+[33m8cc5d02[m Complete Phase 11 implementation
+[33mc59100b[m Merge pull request #13 from Akshatsrii/Akshatsrii-patch-1
+[33ma0f2fd0[m update the All the errors
+[33med7c558[m Merge pull request #12 from Akshatsrii/Akshatsrii-patch-1
+[33m8284780[m update the server.js
+[33mc76ab87[m update the errors
+[33m3a8dab5[m do the reslove the error
+[33mf68ac7f[m update the redis problem
+[33ma6e0554[m update the error
+[33m8659555[m update the errors
+[33m2263289[m update the controller.js
+[33mc7ab7e4[m Merge pull request #11 from Akshatsrii/main
+[33m9dedf31[m Merge branch 'main' into main
+[33m68e480c[m[33m ([m[1;31morigin/backup-my-work[m[33m, [m[1;32mmain[m[33m, [m[1;32mbackup-my-work[m[33m)[m Complete Phase 11 with security, caching, and session management enhancements
+[33m99aef2a[m Create session model for user authentication
+[33m0e0acdd[m Add rate limiting middleware for API protection
+[33m6e4787b[m Strengthen backend security with sessions and rate limiting
+[33mb994369[m Implement logout and refresh token functionality
+[33m81b9af8[m Optimize compare controller with Redis caching
+[33mf7b1e43[m Add Redis caching to environment controller
+[33mb7b48d2[m Add Redis caching to environment controller
+[33m1587106[m Complete backend caching session management and security updates
+[33m50a14eb[m Strengthen backend security with sessions and rate limiting
+[33m41ae9f2[m Create session model for user authentication
+[33me01c718[m Configure Redis client for backend caching
+[33m9cc080d[m Complete DevSync testing, security and sync engine
+[33ma4b7024[m Merge pull request #10 from Akshatsrii/main
+[33m369d6f3[m Merge branch 'Riyaban583:main' into main
+[33m853e76e[m update the docker
+[33m881a8ad[m update the server.js
+[33m8ac1c1d[m fix: add esbuild dependency for vite production build
+[33mc9af4f5[m Complete Phase 9 Docker and deployment preparation
+[33maca9180[m Implement production ready deployment infrastructure
+[33meb0278f[m Containerize DevSync frontend backend and database
+[33mcd13196[m Harden server configuration for production deployment
+[33m20571c1[m Configure production environment and deployment settings
+[33m765f164[m Add Docker Compose orchestration for full stack application
+[33m92a56bd[m Create frontend Docker build and deployment setup
+[33ma2c2f90[m Add Docker configuration for backend services
+[33m6a415c6[m Merge pull request #9 from Akshatsrii/main
+[33m81acf9f[m Implement drift alert and sync completion emails
+[33m7ed6340[m Set up automated email alerts for environment drift
+[33m5dd75d5[m Add real time user feedback with toast notifications
+[33m9f27fd0[m update the toastprovider in main
+[33mf2b02b9[m Implement ToastContext for application alerts
+[33m1420829[m Integrate sync success and error notifications
+[33m6c9fea5[m Implement ToastContext for application alerts
+[33mdb77b18[m Merge branch 'main' of https://github.com/Akshatsrii/Auto-Environment-Sync-Platform
+[33me0bf245[m Add global toast notification system
+[33m38f8323[m Complete Phase 8 - Approval Workflow, RBAC and Protected Routes
+[33mc975b9a[m Complete Phase 7 Versioning and Rollback
+[33m74b1a29[m Merge pull request #8 from Akshatsrii/main
+[33m8781edd[m Complete Phase 6 audit logging and monitoring features
+[33m8f6ac2a[m Configure secure login and signup API communication
+[33m27b7a6c[m Integrate auth workflow across client and server
+[33m95e51bc[m Enable user registration and login through backend APIs
+[33ma9139fb[m Wire up authentication endpoints with React frontend
+[33mef4ca11[m Enhance audit screen with log history management
+[33m3bf5c7f[m Integrate audit log fetching and display functionality
+[33m62f0962[m Set up audit log collection and persistence layer
+[33ma96d3d4[m Implement API support for comparison results
+[33m383a3ce[m Create audit log schema and database model
+[33m9475c4d[m Merge pull request #7 from Akshatsrii/main
+[33md5c1ffa[m Complete Phase 5 sync automation features
+[33mc01065a[m Implement Phase 5 synchronization engine
+[33mce89c71[m Implement backend support for sync operations
+[33mc5cbe7b[m Add API endpoints for synchronization workflows
+[33m1f33d9f[m Integrate sync controller model and routes
+[33mfb614f1[m Introduce synchronization logging functionality
+[33mda1c294[m Add API endpoints for synchronization workflows
+[33md878b84[m Set up synchronization module structure
+[33m0a1402d[m Migrate UI styling from inline CSS to Tailwind
+[33md8ca7cf[m Create SyncLog model for synchronization tracking
+[33md190b0d[m Add sync controller implementation
+[33m0672cf1[m Merge pull request #6 from Akshatsrii/main
+[33m2ffbead[m Implement advanced difference categorization
+[33mdbd8a07[m Implement advanced difference categorization
+[33m4818a03[m Enhance comparison engine for configuration analysis
+[33mf444eb2[m Add missing key detection engine
+[33mb444741[m Implement variable comparison logic
+[33mf9822d4[m Merge branch 'Riyaban583:main' into main
+[33m96c353c[m  Environment Module
+[33m7fc74b7[m Remapped
+[33md7b450f[m Remapped
+[33m0461ce0[m Merge pull request #5 from Akshatsrii/main
+[33m5c5e58f[m Detail Structure Of this Project
+[33mb093d6c[m Merge pull request #4 from Akshatsrii/main
+[33m4e5a73c[m Replace inline styles with Tailwind CSS utilities
+[33mefe41bf[m Replace inline styles with Tailwind CSS utilities
+[33m9377488[m Refactor components from inline CSS to Tailwind CSS
+[33m2f9226c[m Migrate UI styling from inline CSS to Tailwind
+[33m08c27b9[m Convert existing inline styles to Tailwind classes
+[33ma588816[m Improve frontend styling by adopting Tailwind CSS
+[33me0182cf[m Merge pull request #3 from Akshatsrii/main
+[33m1bfc2b0[m reslve the error
+[33m05cc144[m Remapped
+[33mf46f477[m Add backend support for environment management
+[33m2247c31[m Configure environment variables and ignore rules
+[33m47f4981[m Add backend support for environment management
+[33mab30e68[m Implement user authentication and session handling
+[33m202b9a7[m Add protected routes for environment operations
+[33mc0e2767[m Implement authentication controllers and routes
+[33mbfcff10[m Set up backend project structure and server configuration
+[33m8ef19e9[m Build backend architecture for DevSync services
+[33m00453bd[m Configure database connection for backend services
+[33m59b7b07[m Set up backend project structure and server configuration
+[33mea277f0[m Initial commit
+[33me5fb7c6[m Merge pull request #2 from Akshatsrii/main
+[33mc001949[m Merge pull request #2 from Riyaban583/main
+[33m3cffc05[m Merge pull request #1 from Akshatsrii/Akshatsrii-patch-1
+[33m4529518[m Solution for the probl

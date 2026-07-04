@@ -1,5 +1,6 @@
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import NotificationCenter from './NotificationCenter'
 
 const titles = {
   '/dashboard':    'Dashboard',
@@ -15,12 +16,14 @@ function Navbar() {
   const title = titles[pathname] ?? 'DevSync'
 
   const navigate = useNavigate()
-const { logout } = useAuth()
+  const { user, logout } = useAuth()
+  const userName = user?.name || 'User'
+  const initial = userName.charAt(0).toUpperCase()
 
-const handleLogout = () => {
-  logout()
-  navigate('/login')
-}
+  const handleLogout = () => {
+    logout()
+    navigate('/login')
+  }
 
   return (
     <header style={{
@@ -38,14 +41,15 @@ const handleLogout = () => {
       </span>
 
     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-  <div style={{
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-    background: '#dbeafe',
-    padding: '6px 14px',
-    borderRadius: '20px',
-  }}>
+      <NotificationCenter />
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
+        background: '#dbeafe',
+        padding: '6px 14px',
+        borderRadius: '20px',
+      }}>
     <div style={{
       width: '24px',
       height: '24px',
@@ -56,12 +60,12 @@ const handleLogout = () => {
       justifyContent: 'center',
     }}>
       <span style={{ color: '#fff', fontSize: '10px', fontWeight: 700 }}>
-        A
+        {initial}
       </span>
     </div>
 
     <span style={{ color: '#1d4ed8', fontSize: '13px', fontWeight: 500 }}>
-      Akshat
+      {userName}
     </span>
   </div>
 
