@@ -58,4 +58,26 @@ async function sendSyncSuccessEmail(to, data) {
   })
 }
 
-module.exports = { sendDriftAlertEmail, sendSyncSuccessEmail }
+function genericTemplate({ userName, title, message }) {
+  return `
+    <div style="font-family: Inter, sans-serif; background: #e8f4fd; padding: 32px;">
+      <div style="max-width: 480px; margin: 0 auto; background: #fff; border-radius: 12px; padding: 32px; border: 1px solid #bfdbfe;">
+        <h2 style="color: #1e40af; margin-bottom: 8px;">${title}</h2>
+        <p style="color: #64748b; font-size: 14px; margin-bottom: 24px;">Hi ${userName},</p>
+        <p style="color: #334155; font-size: 14px; line-height: 1.6;">${message}</p>
+        <p style="font-size: 13px; color: #94a3b8; margin-top: 24px;">Log in to DevSync to review details.</p>
+      </div>
+    </div>
+  `
+}
+
+async function sendGenericEmail(to, data) {
+  await transporter.sendMail({
+    from: `"DevSync" <${process.env.EMAIL_USER}>`,
+    to,
+    subject: `${data.title} — DevSync`,
+    html: genericTemplate(data),
+  })
+}
+
+module.exports = { sendDriftAlertEmail, sendSyncSuccessEmail, sendGenericEmail }

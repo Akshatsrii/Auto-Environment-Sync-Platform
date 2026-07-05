@@ -44,8 +44,8 @@ const authLimiter = rateLimit({
 // User Limiter
 // --------------------
 const userLimiter = rateLimit({
-  windowMs: 60 * 1000, // 1 minute
-  max: 20,
+windowMs: 15 * 60 * 1000,
+max: 1000,
   standardHeaders: true,
   legacyHeaders: false,
   keyGenerator: (req) => req.user?._id?.toString() || req.ip,

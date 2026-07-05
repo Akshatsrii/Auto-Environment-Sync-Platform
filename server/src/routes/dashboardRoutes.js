@@ -2,8 +2,52 @@ const express = require('express');
 const router = express.Router();
 const { syncQueue, driftQueue, deadLetterQueue } = require('../config/queue');
 const { protect } = require('../middleware/authMiddleware');
+const Environment = require('../models/Environment');
+const SyncLog = require('../models/SyncLog');
+const SyncRequest = require('../models/SyncRequest');
 
 router.use(protect);
+
+// GET /api/dashboard/stats
+router.get('/stats', async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    const [envCount, driftedCount, activeRequestsCount, recentLogs] = await Promise.all([
+      Environment.countDocuments({ createdBy: userId }),
+      Environment.countDocuments({ createdBy: userId, driftStatus: 'drifted' }),
+      SyncRequest.countDocuments({ requestedBy: userId, status: 'pending' }),
+      SyncLog.find({ syncedBy: userId })
+        .populate('sourceEnv', 'name')
+        .populate('targetEnv', 'name')
+        .sort({ createdAt: -1 })
+        .limit(5)
+    ]);
+
+    const environments = await Environment.find({ createdBy: userId });
+    let totalVariables = 0;
+    environments.forEach(e => {
+      totalVariables += e.variables ? e.variables.length : 0;
+    });
+
+    res.json({
+      environmentsCount: envCount,
+      driftedCount,
+      pendingApprovalsCount: activeRequestsCount,
+      totalVariables,
+      recentLogs: recentLogs.map(log => ({
+        id: log._id,
+        source: log.sourceEnv?.name || 'Source',
+        target: log.targetEnv?.name || 'Target',
+        changesCount: log.changes ? log.changes.length : 0,
+        syncedAt: log.createdAt,
+        status: log.status
+      }))
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 // GET /api/dashboard/queue-stats
 router.get('/queue-stats', async (req, res) => {

@@ -28,6 +28,14 @@ const userSchema = new mongoose.Schema(
       enum: ['developer', 'reviewer', 'admin'],
       default: 'developer',
     },
+
+    notificationSettings: {
+      emailEnabled: { type: Boolean, default: true },
+      slackEnabled: { type: Boolean, default: false },
+      slackWebhookUrl: { type: String, default: '' },
+      teamsEnabled: { type: Boolean, default: false },
+      teamsWebhookUrl: { type: String, default: '' },
+    },
   },
   {
     timestamps: true,

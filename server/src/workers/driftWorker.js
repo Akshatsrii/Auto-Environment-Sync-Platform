@@ -1,6 +1,7 @@
 const { Worker } = require('bullmq');
 const { connection } = require('../config/queue');
 const Environment = require('../models/Environment');
+const { addNotificationJob } = require('../queues/notificationQueue');
 
 const driftWorker = new Worker('drift-scan', async (job) => {
   console.log(`[DriftWorker] Scanning for drift...`);
@@ -20,6 +21,22 @@ const driftWorker = new Worker('drift-scan', async (job) => {
   environment.driftStatus = driftDetected ? 'drifted' : 'synced';
   environment.lastDriftCheck = new Date();
   await environment.save();
+
+  if (driftDetected) {
+    await addNotificationJob({
+      userId: environment.createdBy,
+      type: 'drift',
+      title: 'Drift Detected',
+      message: `Configuration drift detected in ${environment.name} environment`,
+      meta: {
+        environmentId: environment._id.toString(),
+        sourceEnv: environment.name,
+        targetEnv: environment.name,
+        driftStatus: 'drifted',
+        changesCount: 1
+      }
+    }).catch(err => console.error('Failed to queue drift notification:', err.message));
+  }
 
   await job.updateProgress(100);
 

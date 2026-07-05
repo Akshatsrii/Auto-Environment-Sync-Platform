@@ -1,7 +1,7 @@
 const Environment = require('../models/Environment')
 const SyncLog = require('../models/SyncLog')
 const { compareEnvironments, generateSyncPlan } = require('../utils/diffEngine')
-const { sendSyncSuccessEmail } = require('../utils/emailService')
+const { addNotificationJob } = require('../queues/notificationQueue');
 
 // POST /api/sync/preview
 const previewSync = async (req, res) => {
@@ -137,15 +137,21 @@ const executeSync = async (req, res) => {
       status: 'success',
     })
 
-    // Send success email (non-blocking)
-    sendSyncSuccessEmail(req.user.email, {
-      userName: req.user.name,
-      sourceEnv: sourceEnv.name,
-      targetEnv: targetEnv.name,
-      changesCount: syncPlan.length,
-    }).catch(err => {
-      console.error('Email failed:', err.message)
-    })
+    // Queue background notification job (handles Socket.IO, Email, Slack, Teams based on settings)
+    await addNotificationJob({
+      userId: req.user._id,
+      type: 'sync',
+      title: 'Sync Completed',
+      message: `${syncPlan.length} change(s) synced from ${sourceEnv.name} → ${targetEnv.name}`,
+      meta: {
+        syncLogId: syncLog._id.toString(),
+        sourceEnv: sourceEnv.name,
+        targetEnv: targetEnv.name,
+        changesCount: syncPlan.length,
+        userName: req.user.name,
+        userEmail: req.user.email
+      }
+    }).catch(err => console.error('Failed to queue sync notification:', err.message));
 
     res.json({
       message: `Synced ${syncPlan.length} change(s) from ${sourceEnv.name} to ${targetEnv.name}`,

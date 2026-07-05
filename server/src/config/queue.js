@@ -11,10 +11,12 @@ const connection = new Redis({
 const syncQueue = new Queue('environment-sync', { connection });
 const driftQueue = new Queue('drift-scan', { connection });
 const deadLetterQueue = new Queue('dead-letter', { connection });
+const notificationQueue = new Queue('notification-queue', { connection });
 
 module.exports = {
   syncQueue,
   driftQueue,
   deadLetterQueue,
+  notificationQueue,
   connection,
 };

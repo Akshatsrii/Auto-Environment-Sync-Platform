@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 
 function Login() {
   const navigate = useNavigate()
+  const { login } = useAuth()
   const [form, setForm] = useState({ email: '', password: '' })
   const [showPass, setShowPass] = useState(false)
   const [remember, setRemember] = useState(true)
@@ -30,8 +32,7 @@ function Login() {
 
       if (!res.ok) throw new Error(data.message || 'Invalid email or password')
 
-      localStorage.setItem('token', data.token)
-      localStorage.setItem('user', JSON.stringify(data.user))
+      login(data.user, data.token)
       localStorage.setItem("refreshToken", data.refreshToken);
       navigate('/dashboard')
     } catch (err) {
