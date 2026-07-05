@@ -138,6 +138,7 @@ const executeSync = async (req, res) => {
     })
 
     // Queue background notification job (handles Socket.IO, Email, Slack, Teams based on settings)
+    console.log("🚀 Adding notification job...");
     await addNotificationJob({
       userId: req.user._id,
       type: 'sync',
@@ -152,6 +153,7 @@ const executeSync = async (req, res) => {
         userEmail: req.user.email
       }
     }).catch(err => console.error('Failed to queue sync notification:', err.message));
+    console.log("✅ Notification job added");
 
     res.json({
       message: `Synced ${syncPlan.length} change(s) from ${sourceEnv.name} to ${targetEnv.name}`,

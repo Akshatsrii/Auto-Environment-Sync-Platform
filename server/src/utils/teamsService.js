@@ -2,7 +2,7 @@ const axios = require('axios');
 
 /**
  * Microsoft Teams Notification Service
- */
+ **/
 async function sendTeamsNotification(webhookUrl, { title, message, type, meta }) {
   if (!webhookUrl) {
     webhookUrl = process.env.TEAMS_WEBHOOK_URL;

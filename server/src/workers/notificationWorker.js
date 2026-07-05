@@ -64,37 +64,66 @@ const notificationWorker = new Worker('notification-queue', async (job) => {
     }
   }
 
-  // 4. Slack Notifications
-  const slackWebhookUrl = settings.slackWebhookUrl || process.env.SLACK_WEBHOOK_URL;
-  if (settings.slackEnabled && slackWebhookUrl) {
-    try {
-      await sendSlackNotification(slackWebhookUrl, {
-        title,
-        message,
-        type,
-        meta
-      });
-      console.log(`[NotificationWorker] Slack notification sent`);
-    } catch (err) {
-      console.error('[NotificationWorker] Slack notification failed:', err.message);
-    }
-  }
+ // 4. Slack Notifications
+const slackWebhookUrl =
+  settings.slackWebhookUrl || process.env.SLACK_WEBHOOK_URL;
 
-  // 5. Teams Notifications
-  const teamsWebhookUrl = settings.teamsWebhookUrl || process.env.TEAMS_WEBHOOK_URL;
-  if (settings.teamsEnabled && teamsWebhookUrl) {
-    try {
-      await sendTeamsNotification(teamsWebhookUrl, {
-        title,
-        message,
-        type,
-        meta
-      });
-      console.log(`[NotificationWorker] Teams notification sent`);
-    } catch (err) {
-      console.error('[NotificationWorker] Teams notification failed:', err.message);
-    }
+console.log("========== SLACK DEBUG ==========");
+console.log("settings:", settings);
+console.log("slackEnabled:", settings.slackEnabled);
+console.log("Webhook Exists:", !!slackWebhookUrl);
+console.log("Webhook URL:", slackWebhookUrl);
+console.log("=================================");
+
+if (settings.slackEnabled && slackWebhookUrl) {
+  try {
+    await sendSlackNotification(slackWebhookUrl, {
+      title,
+      message,
+      type,
+      meta,
+    });
+
+    console.log("✅ Slack notification sent");
+  } catch (err) {
+    console.error(
+      "❌ Slack notification failed:",
+      err.response?.data || err.message
+    );
   }
+} else {
+  console.log("⚠️ Slack notification skipped");
+}
+
+// 5. Teams Notifications
+const teamsWebhookUrl =
+  settings.teamsWebhookUrl || process.env.TEAMS_WEBHOOK_URL;
+
+console.log("========== TEAMS DEBUG ==========");
+console.log("teamsEnabled:", settings.teamsEnabled);
+console.log("Webhook Exists:", !!teamsWebhookUrl);
+console.log("Webhook URL:", teamsWebhookUrl);
+console.log("=================================");
+
+if (settings.teamsEnabled && teamsWebhookUrl) {
+  try {
+    await sendTeamsNotification(teamsWebhookUrl, {
+      title,
+      message,
+      type,
+      meta,
+    });
+
+    console.log("✅ Teams notification sent");
+  } catch (err) {
+    console.error(
+      "❌ Teams notification failed:",
+      err.response?.data || err.message
+    );
+  }
+} else {
+  console.log("⚠️ Teams notification skipped");
+}
 
   return { success: true };
 
