@@ -14,6 +14,10 @@ import Register from "../pages/Register";
 import VersionHistory from "../pages/VersionHistory";
 import ApprovalQueue from "../pages/ApprovalQueue";
 import Unauthorized from "../pages/Unauthorized";
+import AnalyticsDashboard from "../pages/AnalyticsDashboard";
+import SyncAnalytics from "../pages/SyncAnalytics";
+import EnvironmentGrowth from "../pages/EnvironmentGrowth";
+import TopUsers from "../pages/TopUsers";
 
 import ProtectedRoute from "../components/ProtectedRoute";
 
@@ -80,6 +84,42 @@ function AppRoutes() {
   element={
     <ProtectedRoute>
       <Settings />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="analytics"
+  element={
+    <ProtectedRoute>
+      <AnalyticsDashboard />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="sync-analytics"
+  element={
+    <ProtectedRoute>
+      <SyncAnalytics />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="environment-growth"
+  element={
+    <ProtectedRoute>
+      <EnvironmentGrowth />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="top-users"
+  element={
+    <ProtectedRoute>
+      <TopUsers />
     </ProtectedRoute>
   }
 />

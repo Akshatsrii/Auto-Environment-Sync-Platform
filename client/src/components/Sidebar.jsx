@@ -7,6 +7,10 @@ const links = [
   { to: '/compare', label: 'Compare' },
   { to: '/sync', label: 'Sync' },
   { to: '/logs', label: 'Logs' },
+  { to: '/analytics', label: 'Analytics' },
+  { to: "/sync-analytics", label: "Sync Analytics" },
+  { to: "/environment-growth", label: "Environment Growth" },
+  { to: "/top-users", label: "Top Users" },
   { to: '/versions', label: 'Version History' },
   { to: '/settings', label: 'Settings' },
 ]

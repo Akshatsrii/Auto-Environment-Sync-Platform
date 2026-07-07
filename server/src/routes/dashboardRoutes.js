@@ -103,4 +103,49 @@ router.get('/recent-jobs', async (req, res) => {
   }
 });
 
+// GET /api/dashboard/analytics
+router.get('/analytics', async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    // User environments
+    const environments = await Environment.find({ createdBy: userId });
+
+    // User sync logs
+    const syncLogs = await SyncLog.find({ syncedBy: userId });
+
+    const analytics = {
+      totalEnvironments: environments.length,
+      totalSyncs: syncLogs.length,
+
+      successfulSyncs: syncLogs.filter(
+        log => log.status === 'success'
+      ).length,
+
+      failedSyncs: syncLogs.filter(
+        log => log.status === 'failed'
+      ).length,
+
+      driftedEnvironments: environments.filter(
+        env => env.driftStatus === 'drifted'
+      ).length,
+
+      syncedEnvironments: environments.filter(
+        env => env.driftStatus === 'synced'
+      ).length,
+
+      totalVariables: environments.reduce(
+        (sum, env) => sum + env.variables.length,
+        0
+      ),
+    };
+
+    res.json(analytics);
+  } catch (err) {
+    res.status(500).json({
+      message: err.message,
+    });
+  }
+});
+
 module.exports = router;

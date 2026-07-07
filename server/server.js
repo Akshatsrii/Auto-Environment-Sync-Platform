@@ -23,6 +23,10 @@ const sessionRoutes = require("./src/routes/sessionRoutes");
 const jobsRoutes = require("./src/routes/jobsRoutes");
 const dashboardRoutes = require("./src/routes/dashboardRoutes");
 const notificationRoutes = require("./src/routes/notificationRoutes");
+const analyticsRoutes = require("./src/routes/analyticsRoutes");
+const syncAnalyticsRoutes = require("./src/routes/syncAnalyticsRoutes");
+const environmentGrowthRoutes = require("./src/routes/environmentGrowthRoutes");
+const topUsersRoutes = require("./src/routes/topUsersRoutes");
 
 // Scheduler
 const { startDriftScheduler } = require("./src/scheduler/driftScheduler");
@@ -99,6 +103,10 @@ app.use("/api/sync-requests", syncRequestRoutes);
 app.use("/api/sessions", sessionRoutes);
 app.use("/api/jobs", jobsRoutes);
 app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/analytics", analyticsRoutes);
+app.use("/api/sync-analytics", syncAnalyticsRoutes);
+app.use("/api/environment-growth", environmentGrowthRoutes);
+app.use("/api/top-users", topUsersRoutes);
 app.use("/api/notifications", notificationRoutes);
 
 // 404

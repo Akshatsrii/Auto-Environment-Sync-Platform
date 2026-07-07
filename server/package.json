@@ -21,6 +21,7 @@
     "bullmq": "^5.79.2",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
+    "exceljs": "^4.4.0",
     "express": "^5.2.1",
     "express-rate-limit": "^7.5.1",
     "express-validator": "^7.3.2",
@@ -30,6 +31,7 @@
     "mongoose": "^9.7.0",
     "node-cron": "^4.5.0",
     "nodemailer": "^9.0.3",
+    "pdfkit": "^0.19.1",
     "rate-limit-redis": "^4.3.1",
     "redis": "^5.12.1",
     "socket.io": "^4.8.3"
