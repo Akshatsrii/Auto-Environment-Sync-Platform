@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devsync-client
+  labels:
+    app: devsync-client
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: devsync-client
+  template:
+    metadata:
+      labels:
+        app: devsync-client
+    spec:
+      containers:
+      - name: client
+        image: devsync-client:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+          name: http
+        resources:
+          limits:
+            cpu: "500m"
+            memory: "256Mi"
+          requests:
+            cpu: "100m"
+            memory: "64Mi"

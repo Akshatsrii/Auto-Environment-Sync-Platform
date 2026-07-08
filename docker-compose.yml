@@ -1,4 +1,31 @@
 services:
+  mongo:
+    image: mongo:6.0
+    container_name: devsync-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+  redis:
+    image: redis:7.0-alpine
+    container_name: devsync-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   server:
     build: ./server
     container_name: devsync-server
@@ -6,6 +33,17 @@ services:
       - "4000:4000"
     env_file:
       - ./server/.env
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/devsync
+      - REDIS_URL=redis://redis:6379
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - PORT=4000
+    depends_on:
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
 
   client:
     build: ./client
@@ -14,3 +52,7 @@ services:
       - "80:80"
     depends_on:
       - server
+
+volumes:
+  mongo-data:
+  redis-data:
