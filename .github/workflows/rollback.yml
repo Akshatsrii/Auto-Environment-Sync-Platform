@@ -1,0 +1,60 @@
+name: Rollback Kubernetes Deployment
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_service:
+        description: 'Service deployment to rollback'
+        required: true
+        type: choice
+        options:
+          - both
+          - server
+          - client
+      revision:
+        description: 'K8s revision number to rollback to (leave blank for previous stable version)'
+        required: false
+        type: string
+
+jobs:
+  rollback:
+    name: Execute Rollback
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Kubeconfig
+      run: |
+        mkdir -p ~/.kube
+        echo "${{ secrets.KUBECONFIG }}" > ~/.kube/config
+        chmod 600 ~/.kube/config
+
+    - name: Rollback Server Deployment
+      if: ${{ github.event.inputs.target_service == 'both' || github.event.inputs.target_service == 'server' }}
+      run: |
+        if [ -n "${{ github.event.inputs.revision }}" ]; then
+          kubectl rollout undo deployment/devsync-server --to-revision=${{ github.event.inputs.revision }}
+        else
+          kubectl rollout undo deployment/devsync-server
+        fi
+
+    - name: Rollback Client Deployment
+      if: ${{ github.event.inputs.target_service == 'both' || github.event.inputs.target_service == 'client' }}
+      run: |
+        if [ -n "${{ github.event.inputs.revision }}" ]; then
+          kubectl rollout undo deployment/devsync-client --to-revision=${{ github.event.inputs.revision }}
+        else
+          kubectl rollout undo deployment/devsync-client
+        fi
+
+    - name: Verify Rollback Status (Server)
+      if: ${{ github.event.inputs.target_service == 'both' || github.event.inputs.target_service == 'server' }}
+      run: |
+        kubectl rollout status deployment/devsync-server --timeout=60s
+
+    - name: Verify Rollback Status (Client)
+      if: ${{ github.event.inputs.target_service == 'both' || github.event.inputs.target_service == 'client' }}
+      run: |
+        kubectl rollout status deployment/devsync-client --timeout=60s
