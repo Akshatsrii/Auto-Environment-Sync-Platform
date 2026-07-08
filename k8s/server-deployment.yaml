@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devsync-server
+  labels:
+    app: devsync-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: devsync-server
+  template:
+    metadata:
+      labels:
+        app: devsync-server
+    spec:
+      containers:
+      - name: server
+        image: devsync-server:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 4000
+          name: http
+        envFrom:
+        - configMapRef:
+            name: devsync-config
+        - secretRef:
+            name: devsync-secrets
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 4000
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 4000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        resources:
+          limits:
+            cpu: "1"
+            memory: "1Gi"
+          requests:
+            cpu: "250m"
+            memory: "256Mi"
