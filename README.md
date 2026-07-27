@@ -71,7 +71,7 @@ You paste a GitHub URL  →  DevSync scans the repo  →  You get a ready-to-run
 - 🔍 **Scans** `package.json`, `Dockerfile`, `docker-compose.yml`, `requirements.txt` automatically
 - ⚙️ **Detects** exact runtime versions (Node.js, Python, etc.) your project needs
 - 🩺 **Scores** your environment health and tells you exactly what's missing
-- 📋 **Generates** a complete setup report saved to your activity log
+- 📋 **Generates** a complete setup report saved to your activity log audit
 - 🔀 **Compares** environments side-by-side to catch version conflicts before they happen
 - 🔗 **Connects** directly to your GitHub account for seamless repo access
 
